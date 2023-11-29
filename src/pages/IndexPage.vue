@@ -417,12 +417,7 @@ interface ProjectDetails {
 // 獲取項目列表
 const fetchAndProcessProjects = async () => {
   try {
-    const response = await getFuzzyProjectsByUser({
-      "offset": 0,
-      "projectNameSearch": "",
-      "rowsPerPage": 1000,
-      "scene": "FirstVisit"
-    });
+    const response = await getFuzzyProjectsByUser;
     return response;
   } catch (error) {
     console.error('Error fetching projects:', error);
@@ -445,15 +440,15 @@ const projectDetails = ref<ProjectDetails>({
 const fetchProjectDetails = async () => {
 
   const response = await getProjectById(projectId);
-  projectStatus.value = response.data.stt_status;
-  projectDetails.value = response.data;
-  const audio_path: string = response.data.audio_path.split('/')[2];
+  projectStatus.value = response.data.data.stt_status;
+  projectDetails.value = response.data.data;
+  const audio_path: string = response.data.data.audio_path.split('/')[2];
   audioUrl.value = "https://ghi.everfortuneai.com.tw/api/v1/files/" + audio_path
-  editableSttText.value = response.data.stt_result;
+  editableSttText.value = response.data.data.stt_result;
   editableSttText.value = editableSttText.value.replace(/\s+/g, '');
-  editableLlmText.value = response.data.llm_result;
+  editableLlmText.value = response.data.data.llm_result;
 
-  if (response.data.llm_status === 'pending') {
+  if (response.data.data.llm_status === 'pending') {
     editableLlmText.value = '結果生成中 ...'
   }
 };
@@ -645,10 +640,10 @@ const stopRecording = () => {
           lastModified: new Date().getTime(),
         });
         const sttResponse = await executeStt(projectId, scene, file);
-        console.log('STT Response:', sttResponse.data);
+        console.log('STT Response:', sttResponse.data.data);
         // 獲取語音辨識結果
         editableLlmText.value = '結果生成中 ...';
-        editableSttText.value = sttResponse.data;
+        editableSttText.value = sttResponse.data.data;
         isInference.value = true; // 更新狀態以顯示成功的模板
         message.success('檔案上傳成功')
 
@@ -731,9 +726,9 @@ const handleFileUpload = async (event: Event) => {
   try {
     // 上傳文件並調用 STT API
     const sttResponse = await executeStt(projectId, scene, file);
-    console.log('STT Response:', sttResponse.data);
+    console.log('STT Response:', sttResponse.data.data);
     // 獲取語音辨識結果
-    editableSttText.value = sttResponse.data;
+    editableSttText.value = sttResponse.data.data;
     isInference.value = true;
 
     loadingMessage.destroy();
@@ -810,7 +805,7 @@ const reExecuteStt = async () => {
       lastModified: new Date().getTime(),
     });
     const response = await executeStt(projectId, scene, file);
-    editableSttText.value = response.data;
+    editableSttText.value = response.data.data;
     editableSttText.value = '結果生成中...';
   } catch (error) {
     console.error('重新辨識時出錯:', error);
@@ -838,7 +833,7 @@ const handleSttInput = () => {
 
 const handlerLLM = async () => {
   const llmResponse = await executeLlm(projectId, scene);
-  console.log('LLM Response:', llmResponse.data);
+  console.log('LLM Response:', llmResponse.data.data);
   editableLlmText.value = '結果生成中 ...';
 };
 
@@ -879,7 +874,7 @@ const downloadAudio = async () => {
   if (audioUrl.value) {
     try {
       const response = await axios.get(audioUrl.value, { responseType: 'blob' });
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const url = window.URL.createObjectURL(new Blob([response.data.data]));
       const link = document.createElement('a');
       link.href = url;
       link.setAttribute('download', 'recording.wav');

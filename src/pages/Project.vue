@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col items-center">
     <div class="py-2.5 flex items-center justify-between md:w-8/12 w-11/12 border-b-[1px] ">
-      <button @click="goBack" class="hoverButton acitvebutton">
+      <button @click="goBack" class="hoverButton">
         <arrowLeft alt="" class="iconStyle" />
       </button>
 
@@ -14,7 +14,7 @@
 
       <!-- 搜索框 -->
       <div class="relative inline-block text-center">
-        <button @click="startSearch" class="hoverButton acitvebutton">
+        <button @click="startSearch" class="hoverButton">
           <search alt="" class="iconStyle" />
         </button>
 
@@ -60,7 +60,7 @@
         <div v-if="showFilterLabel" class="hidden md:flex items-center filterLabel px-4 rounded-full text-white">
           <button @click="clearFilter"
             class="text-white flex items-center px-4 py-1 bg-blue-300 hover:bg-blue-400 rounded-full ease-in-out duration-300">
-            <filterwhite alt="" class="h-4 w-4 mr-3" />
+            <filterWhite alt="" class="h-4 w-4 mr-3" />
             <span class="text-base mr-3">{{ filterLabel }}</span>
             <close alt="" srcset="" class="h-4 w-4 mr-3" />
           </button>
@@ -154,7 +154,7 @@ import { zhCN, dateZhCN } from 'naive-ui'
 // icon
 import AddIcon from '@/assets/icons/add.svg'
 import Filter from '@/assets/icons/filter.svg'
-import filterwhite from '@/assets/icons/filterwhite.svg'
+import filterWhite from '@/assets/icons/filterWhite.svg'
 import trashCart from '@/assets/icons/trashCart.svg'
 import search from '@/assets/icons/search.svg'
 import close from '@/assets/icons/close.svg'
@@ -165,8 +165,8 @@ type RowData = {
   id: string
   key: number
   name: string
-  scene: string
-  STT_Status: string;
+  scene_type: string
+  stt_status: string;
   sttResult: string
   selected: boolean
   owner: string
@@ -236,8 +236,8 @@ const fetchAndProcessProjects = async () => {
       "scene_type": `${currentScene}`
     });
 
-    console.log(response.data)
-    projects.value = response.data.map((project: Project) => {
+    console.log(response.data.data)
+    projects.value = response.data.data.map((project: Project) => {
       return {
         ...project,
         generate_time: new Date(project.generate_time).toLocaleDateString(),
@@ -261,9 +261,9 @@ const createProject = async () => {
     };
 
     const response = await postProject(newProjectData);
-    console.log("Project created:", response.data);
+    console.log("Project created:", response.data.data);
 
-    const newProjectId = response.data.id;
+    const newProjectId = response.data.data.id;
     // 重新獲取項目列表以更新畫面
     router.push(`/task/${currentScene}/${newProjectId}`);
     await fetchAndProcessProjects();
@@ -323,7 +323,7 @@ const onPositiveClick = async () => {
     showFilterLabel.value = true;
 
 
-    projects.value = response.data.map((project: Project) => {
+    projects.value = response.data.data.map((project: Project) => {
       return {
         ...project,
         generate_time: new Date(project.generate_time).toLocaleDateString(),
@@ -398,9 +398,9 @@ const rowProps = (row: RowData) => {
         // 如果不是 checkbox 的點擊，則檢查項目狀態並可能導航
         try {
           const response = await getProjectById(row.id);
-          const projectData = response.data;
-          console.log('STT 狀態:', projectData.STT_Status);
-          if (projectData.STT_Status === 'pending') {
+          const projectData = response.data.data;
+          console.log('STT 狀態:', projectData.stt_status);
+          if (projectData.stt_status === 'pending') {
             router.push(`/task/${sceneType.value}/${row.id}`);
           } else {
             router.push(`/task/${sceneType.value}/${row.id}`);
@@ -426,7 +426,7 @@ const performSearch = async () => {
       rowsPerPage: 100,
       scene: sceneType.value
     });
-    projects.value = response.data.map((project: Project) => {
+    projects.value = response.data.data.map((project: Project) => {
       return {
         ...project,
         generate_time: new Date(project.generate_time).toLocaleDateString(),
@@ -503,7 +503,7 @@ const columns: ComputedRef<DataTableColumns<RowData>> = computed(() => {
       ellipsis: true,
       minWidth: 120,
       render(row: RowData) {
-        switch (row.scene) {
+        switch (row.scene_type) {
           case 'FirstVisit':
             return '初診';
           case 'Nursing':
@@ -517,7 +517,7 @@ const columns: ComputedRef<DataTableColumns<RowData>> = computed(() => {
           case 'Inpatient':
             return 'Week Summary';
           default:
-            return row.scene; // 如果沒有符合的，就返回原始值
+            return row.scene_type; // 如果沒有符合的，就返回原始值
         }
       }
     },
@@ -527,7 +527,7 @@ const columns: ComputedRef<DataTableColumns<RowData>> = computed(() => {
       key: 'STT_Status',
       render(row: RowData) {
         // 根据 row.STT_Status 的值返回相应的中文字符串
-        switch (row.STT_Status) {
+        switch (row.stt_status) {
           case 'init':
             return '草稿';
           case 'finished':
@@ -537,7 +537,7 @@ const columns: ComputedRef<DataTableColumns<RowData>> = computed(() => {
           case 'error':
             return '判斷失敗';
           default:
-            return row.STT_Status; // 如果没有匹配，返回原始值
+            return row.stt_status; // 如果没有匹配，返回原始值
         }
       },
     },

@@ -252,10 +252,10 @@ const handlerLogin = async () => {
   try {
     const response = await loginUser("test", "abc");
     //FIXME:之後回覆格是要修改
-    if (response.status === 201 && response.data.token !== "") {
-      console.log(response.data)
-      const token = response.data.token;
-      const usernameFromResponse = response.data.username;
+    if (response.status === 201 && response.data.data.token !== "") {
+      console.log(response.data.data)
+      const token = response.data.data.token;
+      const usernameFromResponse = response.data.data.username;
       localStorage.setItem("token", token)
       localStorage.setItem('username', usernameFromResponse)
 

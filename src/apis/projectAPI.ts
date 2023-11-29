@@ -37,9 +37,9 @@ export const postProject = async (obj: Object) => {
 };
 
 // 根據 ID 獲取特定項目
-export const getProjectById = async (projectId: string) => {
+export const getProjectById = async (project_id: string) => {
     return request({
-        url: `/project/${projectId}`,
+        url: `/project/${project_id}`,
         method: 'get',
         headers
     });
