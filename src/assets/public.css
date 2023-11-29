@@ -1,0 +1,415 @@
+/*
+Global css
+*/
+
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
+
+body {
+  font-family: "Noto Sans TC", "Roboto", sans-serif;
+  color: var(--text);
+}
+
+:root {
+  --n-border-hover:#2c8eee !important;
+  --n-border-focus:#2c8eee !important;
+  /* // backgroun背景顏色 */
+  --background-white: #fff;
+  --background-grey: #e3e3e3;
+  --background-disabled: #f6f6f6;
+  /* // Primary主要色 */
+  --primary: #2c8eee;
+  --primary-hover: #90c6fb;
+  --primary-hover2: #e4f2ff;
+  /* // 框與線 */
+  --border: #d9d9d9;
+  --border2: #c2c2c2;
+  --secondary: #26a69a;
+  --accent: #9c27b0;
+  --dark: #1d1d1d;
+  --dark-page: #121212;
+  /* // 狀態色 */
+  --positive: #21ba45;
+  --danger: #ef3e3e;
+  --info: #31ccec;
+  --warning: #f2c037;
+  /* // Font Size文字大小 */
+ --fontExtraLarge: 24px;
+ --fontLarge: 20px; 
+ --fontRegular: 16px;
+ --fontMinium: 12px; 
+ /* // Font Weight字體寬度 */
+ --fontWeightRegular: 400; 
+ --fontWeightBold: 700; 
+  --boxShadow: 0px 0px 5px rgb(51, 54, 57 , 0.2) ;
+  /* //Font Color */
+  --text: #333;
+  --text-secondary: #606060;
+  --text-disabled: #c2c2c2;
+  --text-white: #fff;
+  --background-gradient: linear-gradient(
+    247.9deg,
+    #2c8eee 33.07%,
+    #3fe8c6 127.7%
+  );
+
+  --n-text-decoration-color: rgb(51, 54, 57);
+  --n-border: 1px solid rgb(224, 224, 230);
+  --n-border-disabled: 1px solid rgb(224, 224, 230);
+  --n-border-hover: 1px solid #eee !important;
+  --n-border-focus: 1px solid #eee !important;
+  --n-button-border: 1px solid #fff !important;
+}
+
+body {
+  box-sizing: border-box;
+  font-family: "Noto Sans TC", "Roboto", sans-serif;
+  /* text-align: center; */
+  transition: all 0.3s ease;
+  font-size: var(--fontRegular);
+  font-family: 'Noto Sans TC', '微軟正黑體', sans-serif;
+}
+
+.main {
+  max-width: 1200px;
+  width: 100%;
+}
+
+/* Noto Sans TC letter-spacing: 0.6em */
+body,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Noto Sans TC", sans-serif;
+  font-weight: var(--fontWeightRegular);
+  line-height: initial;
+  letter-spacing: 0.8px;
+}
+
+* {
+  box-sizing: border-box;
+}
+.m-10 {
+  margin: 10px;
+}
+
+.margin-top-8 {
+  margin-top: 8px;
+}
+.margin-top-10 {
+  margin-top: 10px;
+}
+
+.margin-top-48 {
+  margin-top: 48px;
+}
+
+
+.ellipsis {
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+}
+
+/*************************
+ Public stlyes 
+ *************************/
+
+ /* button style */
+button.custom-button{
+  width: 100% ;
+  max-width: 240px;
+  height: 40px;
+  max-width: 100%;
+  margin: 0 auto;
+  /* padding: 12px 20px 12px 20px; */
+  border-radius: 4px;
+  border: 1px solid var(--primary);
+  background-color: var(--background-white);
+  transition: .3s ease-in-out;
+}
+button.custom-button:active{
+  background-color: var(--primary) !important;
+  color: var(--text-white)  !important;
+}
+button.custom-button:hover{
+  background-color: var(--primary-hover2);
+  color: var(--text);
+}
+
+
+button svg {
+  fill: currentColor;
+}
+
+button:active svg {
+  fill: white !important;
+}
+
+
+button.acitvebutton:active {
+  background-color: var(--primary);
+  color: var(--text-white);
+}
+.hoverButton {
+  background-color: transparent; /* 初始背景顏色 */
+  border: none; /* 移除邊框 */
+  cursor: pointer; /* 鼠標變為手指圖標 */
+  padding: 10px; /* 按鈕內填充 */
+  border-radius: 5px; /* 圓角 */
+  transition: background-color 0.3s ease; /* 平滑過渡效果 */
+}
+
+.hoverButton:hover {
+  background-color: var(--primary-hover2);
+}
+
+/* login confirm*/
+.hoverButton-custom {
+  background-color: transparent; 
+  border: none; 
+  cursor: pointer;
+  border-radius: 5px; 
+  transition: background-color 0.3s ease; 
+}
+.hoverButton-custom:active{
+  color: #fff;
+}
+
+.confirm-button {
+  width: 100% ;
+  max-width: 240px;
+  height: 40px;
+  margin: 0 auto;
+  /* padding: 12px 20px 12px 20px; */
+  border-radius: 4px;
+  border: 1px solid var(--primary);
+  background-color: var(--background-white);
+  transition: .3s ease-in-out;
+}
+
+.confirm-button:hover{
+  -webkit-box-shadow: 0 0 15px var(--primary-hover2);
+	-moz-box-shadow: 0 0 15px var(--primary-hover2);
+	box-shadow: 0 0 15px var(--primary-hover2);
+}
+
+.confirm-button:active{
+  background-color: var(--primary) !important;
+  color: var(--text-white);
+}
+
+
+/* checkFrom style */
+.checkForm input[type="checkbox"] {
+  width: 20px;
+  height: 20px; 
+  border-radius: 50%;
+}
+
+.checkForm span {
+  color: #6b6b6b;
+}
+/*************************
+modalStyle
+*************************/
+
+.modalStylePublic{
+  padding: 24px;
+}
+
+.modalStyle{
+  padding: 24px;
+  max-width: 600px;
+  width: 100%;
+}
+
+.modal-shadow{
+  -webkit-box-shadow: var(--boxShadow);
+	-moz-box-shadow: var(--boxShadow);
+	box-shadow: var(--boxShadow);
+  border: none ;
+}
+
+/*************************
+卡片
+*************************/
+.card{
+  color: #2c8eee;
+}
+
+.card:hover {
+  box-shadow: 0px 30px 18px -8px rgba(0, 0, 0, 0.1);
+  transform: scale(1.1, 1.1);
+  color: var(--text-white) !important;
+}
+
+
+.subTitle{
+  font-size: var(--fontRegular);
+}
+
+/*************************
+Others styles 
+**************************/
+
+.n-data-table .n-data-table__pagination{
+  justify-content: center !important;
+}
+
+.n-pagination .n-pagination-item{
+  font-size: 12px;
+  padding-bottom: 2px;
+  margin-bottom: 32px;
+}
+
+/* pagination的樣式 */
+.n-pagination .n-pagination-item:not(.n-pagination-item--disabled).n-pagination-item--active{
+  background-color: var(--primary-hover2);
+  border: none;
+}
+.n-pagination .n-pagination-item:not(.n-pagination-item--disabled):active{
+  background-color: var(--primary);
+  color: white !important;
+  border: none;
+}
+
+.n-pagination .n-pagination-item.n-pagination-item--button,
+.n-pagination .n-pagination-item.n-pagination-item--disabled.n-pagination-item--button{
+  border: none;
+  background-color: transparent;
+}
+
+.n-data-table-wrapper{
+  margin-bottom: 32px;
+}
+
+.n-pagination .n-pagination-item:hover{
+  color: var(--primary) !important;
+} 
+
+
+.n-base-selection .n-base-suffix .n-base-suffix__arrow{
+  color: var(--text) !important;
+}
+.n-base-selection,
+.n-base-selection--selected,
+.n-base-selection--focus{
+  --n-border-focus: 1px solid var(--primary-hover2)!important;
+  --n-border-hover: 1px solid var(--primary-hover2)!important;
+  --n-border-active: 1px solid var(--primary-hover) !important;
+}
+
+
+.n-data-table .n-data-table-thead{
+  --n-merged-th-color : var(var(--background-grey))
+}
+
+.n-data-table-thead .n-data-table-tr{
+  height: 48px;
+}
+
+.n-data-table-tr{
+  height: 64px ;
+  margin: 5px !important;
+}
+
+.n-data-table .n-data-table-td{
+  color: var(--text);
+}
+
+
+.n-data-table .n-data-table-th{
+  color: var(--text);
+}
+
+.n-card > .n-card__content, .n-card > .n-card__footer,
+.n-card > .n-card__content:first-child, .n-card > .n-card__footer:first-child{
+  padding: 0;
+}
+
+
+.n-input--pair,
+.n-input--stateful
+{
+  --n-border-hover: 1px solid #90c6fb !important;
+  --n-border-focus :1px solid #90c6fb !important;
+}
+
+.n-button{
+  background-color: none;
+  border: 1px solid var(--primary-hover);
+  color: var(--text);
+  --n-text-color-hover: #000 !important;
+    --n-text-color-pressed: #2c8eee !important;
+    --n-text-color-focus: var(--text-white) !important;
+    --n-border-hover: 1px solid var(--text-white) !important;
+    --n-border-pressed: 1px solid #2c8eee !important;
+    --n-border-focus: 1px solid var(--text-white) !important;
+    --n-color-hover: var(--text-white) !important;
+    --n-color-pressed: #2c8eee !important;
+    --n-color-focus: var(--text-white) !important;
+    --n-border-hover: 1px solid var(--text-white) !important;
+    --n-border-pressed: 1px solid #2c8eee !important;
+    --n-border-focus: 1px solid var(--text-white) !important;
+}
+/* 增大 checkbox 的大小 */
+.n-checkbox {
+  transform: scale(1.2);
+  margin-right: 8px;
+}
+
+/* 適應放大的 checkbox */
+.n-data-table__check {
+  line-height: normal;
+}
+
+.copyright {
+  font-size: var(--fontMinium);
+}
+
+
+.hover-underline-animation {
+  display: inline-block;
+  position: relative;
+  color: var(--text);
+  cursor: pointer;
+  font-family: sans-serif;
+  font-weight: 400;
+  line-height: 1.4;
+  transition: 300ms cubic-bezier(.2, .7, .5, 1);
+}
+.hover-underline-animation:hover {
+  color: var(--primary);
+}
+.hover-underline-animation:after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(1);
+  height: 1px;
+  bottom: -0px;
+  left: 0;
+  background: var(--text);
+  transform-origin: top left;
+  transition: transform 250ms ease-in-out;
+  z-index: 2;
+}
+
+.hover-underline-animation:hover:after {
+  background: var(--primary);
+}
+
+.hover-underline-animation:hover:after {
+  transform: scaleX(0);
+  transform-origin: top right;
+}
+
+.tagStyle{
+  min-width: 20px;
+  height: 20px;
+}
