@@ -170,6 +170,21 @@ button.acitvebutton:active {
 	box-shadow: 0 0 15px var(--primary-hover2);
 }
 
+.topbarButtonHover{
+  background-color: transparent; /* 初始背景顏色 */
+  border: none; /* 移除邊框 */
+  cursor: pointer; /* 鼠標變為手指圖標 */
+  padding: 10px; /* 按鈕內填充 */
+  border-radius: 5px; /* 圓角 */
+  transition: background-color 0.3s ease; /* 平滑過渡效果 */
+}
+
+.topbarButtonHover:hover{
+  -webkit-box-shadow: 0 0 15px var(--primary-hover2);
+	-moz-box-shadow: 0 0 15px var(--primary-hover2);
+	box-shadow: 0 0 15px var(--primary-hover2);
+  background-color: var(--primary-hover2);
+}
 /* login confirm*/
 .hoverButton-custom {
   background-color: transparent; 

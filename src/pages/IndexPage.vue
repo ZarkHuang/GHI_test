@@ -1,7 +1,7 @@
 <template>
   <div class="flex  items-center flex-col ">
     <div class="py-2.5 flex items-center justify-between md:w-8/12 w-11/12 border-b-[1px]">
-      <button @click="goBack" class="hoverButton acitvebutton">
+      <button @click="goBack" class="hoverButton topbarButtonHover">
         <arrowLeft alt="" class="iconStyle" />
       </button>
       <div class="text-center flex-grow md:w-8/12 w-10/12">
@@ -13,7 +13,7 @@
         </h4>
       </div>
 
-      <button @click="showEditModal" class="hoverButton acitvebutton">
+      <button @click="showEditModal" class="hoverButton topbarButtonHover">
         <pen alt="" class="iconStyle" />
       </button>
 
@@ -64,10 +64,10 @@
       </div>
     </template>
     <template v-else-if="projectStatus === 'init' && showMicrophoneAnimation">
-      <div class="flex justify-center items-center overlay">
-        <div class="text-center mt-20">
-          <MicrophoneAnimation :paused="isPaused" @toggle-recording="handleRecordingToggle"
-            :recordingTime="formattedRecordingTime" :disabled="isPauseButtonDisabled" class="disabled:opacity-25"/>
+  <div class="flex justify-center items-center overlay">
+    <div class="flex flex-col justify-center items-center h-full">
+        <MicrophoneAnimation :paused="isPaused" @toggle-recording="handleRecordingToggle"
+          :recordingTime="formattedRecordingTime" :disabled="isPauseButtonDisabled" class="disabled:opacity-25"/>
           <div
             class="audioButton flex flex-col sm:flex-row justify-center items-center space-x-0 sm:space-x-2 space-y-2 sm:space-y-0 mt-24">
             <button @click="toggleRecording" :disabled="isPauseButtonDisabled"
@@ -584,6 +584,7 @@ const showEditModal = () => {
 
 
 // 限制錄音時間
+// const MAX_RECORDING_TIME = 480; // 最大錄音時間（秒）
 const MAX_RECORDING_TIME = 5; // 最大錄音時間（秒）
 const checkRecordingTime = () => {
   if (recordingTime.value >= MAX_RECORDING_TIME) {
@@ -1026,6 +1027,12 @@ onBeforeUnmount(async () => {
 </script>
 
 <style scoped>
+.overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* 使用視窗高度確保垂直居中 */
+}
 .cards {
   display: flex;
   flex-wrap: wrap;
@@ -1153,7 +1160,7 @@ onBeforeUnmount(async () => {
 
 .audioButton {
   position: absolute;
-  top: 65%;
+  top: 70%;
   left: 50%;
   transform: translate(-50%, -50%);
 }

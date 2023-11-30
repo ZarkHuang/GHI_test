@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col items-center">
     <div class="py-2.5 flex items-center justify-between md:w-8/12 w-11/12 border-b-[1px] ">
-      <button @click="goBack" class="hoverButton">
+      <button @click="goBack" class="topbarButtonHover">
         <arrowLeft alt="" class="iconStyle" />
       </button>
 
@@ -14,7 +14,7 @@
 
       <!-- 搜索框 -->
       <div class="relative inline-block text-center">
-        <button @click="startSearch" class="hoverButton">
+        <button @click="startSearch" class="topbarButtonHover">
           <search alt="" class="iconStyle" />
         </button>
 
@@ -656,4 +656,6 @@ button.project-button:active {
     padding: 16px;
   }
 }
+
+
 </style>
