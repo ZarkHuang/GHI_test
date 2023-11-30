@@ -2,8 +2,7 @@ import axios from 'axios'
 
 const service = axios.create({
   // baseURL: import.meta.env.VITE_APP_BASE_API
-  baseURL: "https://ghi.everfortuneai.com.tw/api/v1/"
-
+  baseURL: "https://ghi-dev.everfortuneai.com.tw/api/v1"
 })
 
 service.interceptors.request.use(

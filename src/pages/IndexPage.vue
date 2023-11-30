@@ -42,7 +42,7 @@
               </n-icon>
               <div class="card__info text-center">
                 <h3 class="card__title font-custom-bold-weight text-base">語音錄製</h3>
-                <span class="card__category text-xs">錄製時限為5分鐘</span>
+                <span class="card__category text-xs mt-1">錄製時限為8分鐘</span>
               </div>
             </div>
           </button>
@@ -55,7 +55,7 @@
               </n-icon>
               <div class="card__info text-center">
                 <h3 class="card__title font-custom-bold-weight text-base">上傳語音</h3>
-                <span class="card__category text-xs">檔案大小限制100MB</span>
+                <span class="card__category text-xs mt-1">檔案大小限制100MB</span>
               </div>
             </div>
           </button>
@@ -67,11 +67,11 @@
       <div class="flex justify-center items-center overlay">
         <div class="text-center mt-20">
           <MicrophoneAnimation :paused="isPaused" @toggle-recording="handleRecordingToggle"
-            :recordingTime="formattedRecordingTime" />
+            :recordingTime="formattedRecordingTime" :disabled="isPauseButtonDisabled" class="disabled:opacity-25"/>
           <div
             class="audioButton flex flex-col sm:flex-row justify-center items-center space-x-0 sm:space-x-2 space-y-2 sm:space-y-0 mt-24">
-            <button @click="toggleRecording"
-              class="acitvebutton hoverButton justify-center recordBtn flex items-center border border-blue-300px-2 py-1">
+            <button @click="toggleRecording" :disabled="isPauseButtonDisabled"
+              class="ease-in-out disabled:opacity-50   justify-center recordBtn flex items-center border border-blue-300px-2 py-1">
               <!-- 暫停圖標 -->
               <n-icon class="mx-1" v-if="!isPaused">
                 <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
@@ -82,16 +82,28 @@
 
 
               <n-icon class="mx-1" v-else>
-                <MicOn />
+                <MicOn alt="" class="iconStyle h-3 w-3 mr-2" />
               </n-icon>
               {{ isPaused ? '繼續' : '暫停' }}
             </button>
 
             <button @click="stopRecording"
-              class="acitvebutton hoverButton justify-center recordBtn flex items-center border border-blue-300px-2 py-1">
+              class=" justify-center recordBtn flex items-center border border-blue-300px-2 py-1">
               <Stop alt="" class="iconStyle h-3 w-3 mr-2" />
               結束並產出報告
             </button>
+
+            <n-modal v-model:show="showRecordingLimitModal"
+            class="bg-white py-10 px-4 rounded-lg shadow-md border border-blue-300">
+            <n-card bordered :style="`width: ${isMobile ? '340px' : '420px'}; height: ${isMobile ? '220px' : '220px'}`">
+                <h4 class="text-xl font-bold pb-2 text-center">錄音時間已達上限</h4>
+                <p class="text-base  text-center">已達錄音上限8分鐘，將結束錄音並產生報告。</p>
+                <n-space justify="center" class="mt-5">
+                  <button class="confirm-button flex items-center" @click="handleModalConfirm">確定</button>
+                </n-space>
+              </n-card>
+            </n-modal>
+
           </div>
         </div>
       </div>
@@ -197,9 +209,9 @@
               <!-- 如果是Nursing狀態顯示 -->
               <div v-if="scene === 'Nursing'"
                 class="input-style s-input-style w-full border border-slate-300 rounded-md py-2 pl-3 pr-3 shadow-sm overflow-y-auto max-h-[200px] resize-none">
-                <div v-for="(item, index) in llm_result_test" :key="index" class="flex gap-2">
+                <div v-for="(item, index) in llm_result_test" :key="index" class="flex gap-2 mb-5">
                   <div v-if="item[0] !== '結果生成中 ...'"
-                    class="bg-primary rounded-md flex mr-2 justify-center items-center mt-0.5 tagStyle">
+                    class="bg-primary rounded-md flex mr-2 justify-center items-center tagStyle">
                     <p class="text-white text-sm">{{ item[0] }}</p>
                   </div>
 
@@ -210,7 +222,7 @@
               </div>
               <!-- 如果場景是其他狀態就顯示 -->
               <textarea v-else
-                class="input-style s-input-style w-full border border-slate-300 rounded-md py-2 pl-3 pr-3 shadow-sm  resize-none"
+                class="input-style s-input-style w-full border border-slate-300 rounded-md pl-3 pr-3 shadow-sm  resize-none"
                 placeholder="資料讀取中..." v-model="editableLlmText" rows="4" readonly>
             </textarea>
 
@@ -271,8 +283,6 @@
                 </n-card>
               </n-modal>
 
-
-
               <button @click="downloadAudio" class="mt-1">
                 <downloadBlack />
               </button>
@@ -288,7 +298,7 @@
 
           </div>
           <div class="px-6 pb-6 flex">
-            <button :disabled="isReExecuteSttButtonDisabled"
+            <button
               class="mx-2 flex items-center justify-center gap-2 rounded-md h-10 w-full bg-white border border-blue-300 hoverhover:shadow-md hover:shadow-blue-300/20 transition duration-300 ease-in-out disabled:opacity-50 button-style"
               @click="reExecuteStt">
               <refresh />
@@ -314,7 +324,6 @@
                   class="bg-primary rounded-md flex mr-2 justify-center items-center mt-0.5 tagStyle">
                   <p class="text-white text-sm">{{ item[0] }}</p>
                 </div>
-                <p v-else class="text-base">{{ item[0] }}</p>
                 <p>{{ item[1] }}</p>
               </div>
             </div>
@@ -327,7 +336,7 @@
             <!-- 其他 -->
           </div>
           <div class="px-6 p-5 flex">
-            <button :disabled="isButtonDisabled"
+            <button
               class="mx-2 flex items-center justify-center gap-2 rounded-md h-10 w-full bg-white border border-blue-300 hoverhover:shadow-md hover:shadow-blue-300/20 transition duration-300 ease-in-out disabled:opacity-50 button-style"
               @click="reExecutellm">
               <refresh />
@@ -354,11 +363,12 @@
   </div>
 </template>
 
+
 <script setup lang="ts">
 import { ref, onBeforeUnmount, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from "vue-router"
 import { useMessage } from 'naive-ui';
-import { getFuzzyProjectsByUser, getProjectById, updateProjectByID, executeStt, executeLlm } from "@/apis/projectAPI.ts"
+import { getFuzzyProjectsByUser, getProjectById, updateProjectByID, executeStt, executeLlm, createWebSocket, deleteAudioFile, deleteWebSocket } from "@/apis/projectAPI.ts"
 import MicrophoneAnimation from "@/components/MicrophoneAnimation.vue";
 import AudioPlayer from "@/components/AudioPlayer.vue"
 import Loader from '@/components/Loader.vue'
@@ -404,6 +414,8 @@ const windowWidth = ref(window.innerWidth);
 const isMobile = computed(() => windowWidth.value <= 640);
 const isButtonDisabled = ref(false);
 const isReExecuteSttButtonDisabled = ref(false);
+const showRecordingLimitModal = ref(false);
+const isPauseButtonDisabled = ref(false);
 
 window.addEventListener('resize', () => {
   windowWidth.value = window.innerWidth;
@@ -417,7 +429,12 @@ interface ProjectDetails {
 // 獲取項目列表
 const fetchAndProcessProjects = async () => {
   try {
-    const response = await getFuzzyProjectsByUser;
+    const response = await getFuzzyProjectsByUser({
+      "offset": 0,
+      "fuzzy_search": "",
+      "rowsPerPage": 1000,
+      "scene_type": "FirstVisit"
+    });
     return response;
   } catch (error) {
     console.error('Error fetching projects:', error);
@@ -438,12 +455,11 @@ const projectDetails = ref<ProjectDetails>({
 });
 
 const fetchProjectDetails = async () => {
-
   const response = await getProjectById(projectId);
   projectStatus.value = response.data.data.stt_status;
   projectDetails.value = response.data.data;
   const audio_path: string = response.data.data.audio_path.split('/')[2];
-  audioUrl.value = "https://ghi.everfortuneai.com.tw/api/v1/files/" + audio_path
+  audioUrl.value = "https://ghi-dev.everfortuneai.com.tw/api/v1/files/" + audio_path
   editableSttText.value = response.data.data.stt_result;
   editableSttText.value = editableSttText.value.replace(/\s+/g, '');
   editableLlmText.value = response.data.data.llm_result;
@@ -475,18 +491,18 @@ const llm_result_test = computed(() => {
 });
 
 
+
+
 const deleteAudio = async () => {
   if (projectDetails.value.audio_path) {
     const fileName: string = projectDetails.value.audio_path.split('/')[2];
     console.log(fileName);
     try {
-      const result = await axios.delete(`https://ghi.everfortuneai.com.tw/api/v1/azure/${fileName}`, {
-        headers: {
-          "Authorization": `Bearer ${localStorage.getItem("token")}`
-        }
-      });
+      const result = await deleteAudioFile(fileName);
       if (result.status === 200) {
-        fetchProjectDetails();
+        fetchProjectDetails(); // 確保此函數在範圍內
+      } else {
+        console.log('刪除音檔未成功', result.status);
       }
     } catch (error) {
       console.error('刪除音檔時出現錯誤:', error);
@@ -501,7 +517,10 @@ const deleteAudio = async () => {
 // 更新專案標題
 const updateProjectName = async () => {
   try {
-    const updatedData = { project_name: temporaryProjectName.value };
+    const updatedData = {
+      project_name: temporaryProjectName.value,
+      scene_type: scene
+    };
     const response = await updateProjectByID(projectDetails.value.id, updatedData);
 
     projectDetails.value.project_name = temporaryProjectName.value;
@@ -518,12 +537,15 @@ const updateProjectName = async () => {
 // 更新 STT 內容
 const updateSttContent = async () => {
   try {
-    const updatedData = { stt_result: editableSttText.value };
+    const updatedData = {
+      stt_result: editableSttText.value,
+      scene_type: scene
+    };
     const response = await updateProjectByID(projectDetails.value.id, updatedData);
 
     if (response.status === 200) {
       await handlerLLM();
-      message.success('STT 内容更新成功，SOAP報告生成中...');
+      message.success('STT 内容更新成功，報告生成中...');
     }
 
     isSttTextChanged.value = false;
@@ -561,8 +583,22 @@ const showEditModal = () => {
 };
 
 
-const startRecording = async () => {
+// 限制錄音時間
+const MAX_RECORDING_TIME = 5; // 最大錄音時間（秒）
+const checkRecordingTime = () => {
+  if (recordingTime.value >= MAX_RECORDING_TIME) {
+    isPauseButtonDisabled.value = true;
+    pauseRecording(); // 暫停錄音
+    showRecordingLimitModal.value = true;
+  }
+};
 
+const handleModalConfirm = () => {
+  showRecordingLimitModal.value = false; // 隱藏模態框
+  stopRecording(); // 停止錄音並進行其他處理
+};
+
+const startRecording = async () => {
   navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
     let mimeType = 'audio/webm';
     if (MediaRecorder.isTypeSupported('audio/mp4')) {
@@ -595,6 +631,7 @@ const startRecording = async () => {
       isPaused.value = false
       intervalId = setInterval(() => {
         recordingTime.value++;
+        checkRecordingTime();
       }, 1000);
     };
     mediaRecorder.onstop = handleRecordingStop;
@@ -640,10 +677,11 @@ const stopRecording = () => {
           lastModified: new Date().getTime(),
         });
         const sttResponse = await executeStt(projectId, scene, file);
-        console.log('STT Response:', sttResponse.data.data);
+        console.log('STT Response:', sttResponse.data);
+        console.log(scene, file)
         // 獲取語音辨識結果
         editableLlmText.value = '結果生成中 ...';
-        editableSttText.value = sttResponse.data.data;
+        editableSttText.value = sttResponse.data;
         isInference.value = true; // 更新狀態以顯示成功的模板
         message.success('檔案上傳成功')
 
@@ -689,6 +727,7 @@ const resumeRecording = () => {
     isPaused.value = false;
     intervalId = setInterval(() => {
       recordingTime.value++;
+      checkRecordingTime();
     }, 1000);
   }
 };
@@ -722,13 +761,12 @@ const handleFileUpload = async (event: Event) => {
   }
   uploadedFile.value = file;
   const loadingMessage = message.loading('文件上傳中，請稍後...', { duration: 0 });
-
   try {
     // 上傳文件並調用 STT API
     const sttResponse = await executeStt(projectId, scene, file);
-    console.log('STT Response:', sttResponse.data.data);
+    console.log('STT Response:', sttResponse.data);
     // 獲取語音辨識結果
-    editableSttText.value = sttResponse.data.data;
+    editableSttText.value = sttResponse.data;
     isInference.value = true;
 
     loadingMessage.destroy();
@@ -833,8 +871,9 @@ const handleSttInput = () => {
 
 const handlerLLM = async () => {
   const llmResponse = await executeLlm(projectId, scene);
-  console.log('LLM Response:', llmResponse.data.data);
+  console.log('LLM Response:', llmResponse.data);
   editableLlmText.value = '結果生成中 ...';
+
 };
 
 // 下載橫向 PDF 報告的方法
@@ -898,24 +937,26 @@ const downloadAudio = async () => {
 *****************************************************************/
 
 let client = ref<mqtt.MqttClient>()
-const token = localStorage.getItem("token")
 const userName = ref("")
 const CreateChannel = async () => {
-  const result = await axios.post("https://ghi.everfortuneai.com.tw/api/v1/ws/create", {}, {
-    headers: {
-      Authorization: `Bearer ${token}`
+  try {
+    const result = await createWebSocket();
+
+    if (result.status === 200) {
+      console.log(result.data);
+      const message = result.data.data.message;
+      userName.value = message.split(" ")[1];
+      ConnectChannel(); // 確保 ConnectChannel 函式在這個範圍內
+    } else {
+      console.log("Create ERROR");
     }
-  });
-  if (result.status !== 200) {
-    console.log("Create ERROR");
-    return;
-  } else {
-    console.log(result.data.username)
-    userName.value = result.data.username
-    ConnectChannel()
+  } catch (error) {
+    console.error("Error creating WebSocket channel:", error);
   }
-  fetchProjectDetails()
+
+  fetchProjectDetails(); // 根據需要調整這一步
 }
+
 const ConnectChannel = async () => {
   client.value = mqtt.connect(import.meta.env.VITE_WEBSOCKET_HOST, {
     username: "ghi:ghi",
@@ -974,18 +1015,12 @@ onBeforeUnmount(async () => {
   try {
     client.value!.end();
 
-  } catch (error) {
-    console.error(error)
-  }
-
-  const result = await axios.post("https://ghi.everfortuneai.com.tw/api/v1/ws/delete", {}, {
-    headers: {
-      Authorization: `Bearer ${token}`,
+    const result = await deleteWebSocket();
+    if (result.status == 200) {
+      console.log("Delete SUCCESS");
     }
-  });
-  if (result.status == 200) {
-    console.log("Delete SUCCESS");
-
+  } catch (error) {
+    console.error("Error deleting WebSocket channel:", error);
   }
 });
 </script>
@@ -1068,7 +1103,8 @@ onBeforeUnmount(async () => {
 }
 
 .recordBtn {
-  width: 240PX;
+  width: 100%;
+  min-width: 240px;
   height: 40px;
   margin: 4px;
   border-radius: 4px;
@@ -1079,7 +1115,7 @@ onBeforeUnmount(async () => {
 
 @media (max-width: 480px) {
   .recordBtn {
-    width: 300PX;
+    width: 100%;
   }
 }
 

@@ -249,7 +249,6 @@ const fetchAndProcessProjects = async () => {
     console.error('Error fetching projects:', error);
   }
 };
-
 //新增專案
 const createProject = async () => {
   try {
@@ -257,13 +256,14 @@ const createProject = async () => {
     const currentScene = sceneType.value.toString();
     const newProjectData = {
       project_name: `${currentDate}`,
-      scene: `${currentScene}`
+      scene_type: `${currentScene}` 
     };
 
     const response = await postProject(newProjectData);
     console.log("Project created:", response.data.data);
 
     const newProjectId = response.data.data.id;
+
     // 重新獲取項目列表以更新畫面
     router.push(`/task/${currentScene}/${newProjectId}`);
     await fetchAndProcessProjects();
@@ -271,6 +271,7 @@ const createProject = async () => {
     console.error("Error creating project:", error);
   }
 };
+
 
 const deleteSelectedProjects = async () => {
   if (selectedRows.value.length === 0) {
@@ -294,9 +295,9 @@ const deleteSelectedProjects = async () => {
   selectedRows.value = [];
 };
 
-const adjustDate = (dateStr: string) => {
+const adjustDate = (dateStr :string) => {
   const date = new Date(dateStr);
-  date.setDate(date.getDate() + 2);
+  date.setDate(date.getDate() + 1); 
   return date.toISOString().split('T')[0];
 };
 
@@ -310,10 +311,9 @@ const onPositiveClick = async () => {
     offset: 0,
     rowsPerPage: 100,
     scene_type: sceneType.value,
-    start_date: range.value ? adjustDate(new Date(range.value[0]).toISOString().split('T')[0]) : "",
+    start_date: range.value ? new Date(range.value[0]).toISOString().split('T')[0] : "",
     end_date: range.value ? adjustDate(new Date(range.value[1]).toISOString().split('T')[0]) : "",
-    ProjectName: projectSearchText.value,
-    Owenr: selectedOption.value,
+    project_name: projectSearchText.value,
   };
   console.log('發送到後端的篩選條件:', filterObj);
   try {
@@ -422,9 +422,9 @@ const performSearch = async () => {
   try {
     const response = await getFuzzyProjectsByUser({
       offset: 0,
-      FuzzySearch: searchText.value,
+      fuzzy_search: searchText.value,
       rowsPerPage: 100,
-      scene: sceneType.value
+      scene_type: sceneType.value
     });
     projects.value = response.data.data.map((project: Project) => {
       return {

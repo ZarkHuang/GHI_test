@@ -1,10 +1,12 @@
 <template>
-    <div class="mic-container" @click="toggleAnimation" :class="{ 'small-screen': isSmallScreen }">
+    <div class="mic-container" @click="toggleAnimation"
+        :class="{ 'small-screen': isSmallScreen, 'disabled': props.disabled }">
         <div class="circle" :class="{ active: isAnimationActive }">
             <div class="col">
-                <div class="pl-6 m-4">
-                    <pauseIcon v-if="paused" alt="" class="ml-1 w-20 h-20" />
-                    <microOnIcon v-else alt="" class="w-20 h-20" />
+                <div class="flex items-center mb-2">
+                    <pauseIcon v-if="paused" alt=""
+                        :class="{ 'icon-disabled': props.disabled, 'icon-small': isSmallScreen }" class="ml-2.5" />
+                    <microOnIcon v-else alt="" :class="{ 'icon-disabled': props.disabled, 'icon-small': isSmallScreen }" />
                 </div>
                 <div>
                     {{ recordingTime }}
@@ -14,7 +16,7 @@
     </div>
 </template>
 <script setup lang="ts">
-import { ref, watchEffect, onMounted, onBeforeUnmount } from 'vue';
+import { ref, watchEffect, onMounted, onBeforeUnmount, defineProps } from 'vue';
 import pauseIcon from '@/assets/icons/Pause.svg';
 import microOnIcon from '@/assets/icons/microOn.svg';
 
@@ -26,6 +28,10 @@ const props = defineProps({
     paused: {
         type: Boolean,
         default: false
+    },
+    disabled: {
+        type: Boolean,
+        default: false,
     }
 });
 
@@ -38,12 +44,13 @@ watchEffect(() => {
 const emit = defineEmits(['toggle-recording']);
 
 const toggleAnimation = () => {
-    emit('toggle-recording');
+    if (!props.disabled) {
+        emit('toggle-recording');
+    }
 };
 
 
 const isSmallScreen = ref(window.innerWidth < 768); // 假設 768px 以下為手機屏幕尺寸
-
 const checkScreenSize = () => {
     isSmallScreen.value = window.innerWidth < 768;
 };
@@ -82,6 +89,7 @@ onBeforeUnmount(() => {
     box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.05), 0 1px 18px 0 rgba(0, 0, 0, 0.05),
         0 3px 5px -3px rgba(0, 0, 0, 0.05);
 }
+
 .mic-container .circle:before {
     content: "";
     width: 80px;
@@ -207,7 +215,6 @@ onBeforeUnmount(() => {
     height: 240px;
 }
 
-
 /* 適應小屏幕的其他樣式 */
 .small-screen .circle:before {
     width: 200px;
@@ -236,13 +243,30 @@ onBeforeUnmount(() => {
 
 @media (max-width: 480px) {
     .mic-container {
-        margin-top: 1rem; /* 適當調整間距 */
+        margin-top: 1rem;
+        /* 適當調整間距 */
     }
 
     .mic-container .circle {
-        width: 200px; /* 更小尺寸的圓 */
+        width: 200px;
         height: 200px;
     }
+
+    .icon-small {
+        width: 5rem;
+        height:5rem;
+    }
+}
+
+.disabled {
+    pointer-events: none;
+    /* 禁用點擊 */
+    opacity: 0.5;
+}
+
+.icon-disabled {
+    filter: grayscale(100%);
+    /* 將顏色轉為灰階 */
 }
 </style>
   

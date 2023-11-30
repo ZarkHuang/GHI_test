@@ -29,7 +29,7 @@ export const getFilterProjectsByUser = async (obj :object) => {
 // 創建新項目
 export const postProject = async (obj: Object) => {
     return request({
-        url: '/project/createProject',
+        url: '/project/create',
         method: 'post',
         data: obj,
         headers
@@ -46,9 +46,9 @@ export const getProjectById = async (project_id: string) => {
 };
 
 // 更新標題項目
-export const updateProjectByID = async (projectId:number, updatedData:any) => {
+export const updateProjectByID = async (project_id:number, updatedData:any) => {
     return request({
-      url: `/project/${projectId}`,
+      url: `/project/${project_id}`,
       method: 'put',
       data: updatedData,
       headers
@@ -76,13 +76,13 @@ export const deleteProjectById = async (id: number) => {
 };
 
 // 回呼stt
-export const executeStt = async (projectId: string, sceneType: string, file: File) => {
-    console.log(`Sending STT request with projectId: ${projectId}, sceneType: ${sceneType}, file: ${file.name}`);
+export const executeStt = async (project_id: string, scene_type: string, file: File) => {
+    console.log(`Sending STT request with project_id: ${project_id}, sceneType: ${scene_type}, file: ${file.name}`);
     const formData = new FormData();
-    formData.append('projectId', projectId.toString());
-    formData.append('sceneType', sceneType);
+    formData.append('project_id', project_id.toString());
+    formData.append('sceneType', scene_type);
     formData.append('file', file);
-
+    console.log(scene_type)
     return request({
         url: '/ai/stt',
         method: 'post',
@@ -94,14 +94,15 @@ export const executeStt = async (projectId: string, sceneType: string, file: Fil
     });
 };
 
+
 // 回呼llm
-export const executeLlm = async (projectId:string, sceneType:string) => {
+export const executeLlm = async (project_id:string, scene_type:string) => {
     return request({
         url: '/ai/llm',
         method: 'post',
         data: {
-            projectId: projectId,
-            sceneType: sceneType 
+            project_id: project_id,
+            scene_type: scene_type 
         },
         headers
     });
@@ -116,3 +117,23 @@ export const deleteAudioFile = async (fileName: string) => {
         headers
     });
 };
+
+
+// 刪除Websocket請求
+export const deleteWebSocket = async () => {
+    return request({
+        url: "/ws/delete",
+        method: 'post',
+        headers
+    });
+};
+
+// 建立Websocket請求
+export const createWebSocket = async() =>{
+    return request({
+        url: "/ws/create",
+        method: 'post',
+        headers
+    })
+}
+

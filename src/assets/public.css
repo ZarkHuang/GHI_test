@@ -165,7 +165,9 @@ button.acitvebutton:active {
 }
 
 .hoverButton:hover {
-  background-color: var(--primary-hover2);
+  -webkit-box-shadow: 0 0 15px var(--primary-hover2);
+	-moz-box-shadow: 0 0 15px var(--primary-hover2);
+	box-shadow: 0 0 15px var(--primary-hover2);
 }
 
 /* login confirm*/
@@ -178,6 +180,7 @@ button.acitvebutton:active {
 }
 .hoverButton-custom:active{
   color: #fff;
+  background-color: var(--primary);
 }
 
 .confirm-button {
@@ -333,6 +336,7 @@ Others styles
 }
 
 
+
 .n-input--pair,
 .n-input--stateful
 {
@@ -412,4 +416,10 @@ Others styles
 .tagStyle{
   min-width: 20px;
   height: 20px;
+  margin-bottom: 16px;
+}
+
+button:disabled {
+  pointer-events: none;
+  cursor: not-allowed; /* 或 cursor: default; 根據您的需求 */
 }
