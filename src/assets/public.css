@@ -140,8 +140,6 @@ button.custom-button:hover{
   background-color: var(--primary-hover2);
   color: var(--text);
 }
-
-
 button svg {
   fill: currentColor;
 }
@@ -150,11 +148,12 @@ button:active svg {
   fill: white !important;
 }
 
-
 button.acitvebutton:active {
   background-color: var(--primary);
   color: var(--text-white);
 }
+
+/* common button */
 .hoverButton {
   background-color: transparent; /* 初始背景顏色 */
   border: none; /* 移除邊框 */
@@ -163,28 +162,59 @@ button.acitvebutton:active {
   border-radius: 5px; /* 圓角 */
   transition: background-color 0.3s ease; /* 平滑過渡效果 */
 }
-
 .hoverButton:hover {
   -webkit-box-shadow: 0 0 15px var(--primary-hover2);
 	-moz-box-shadow: 0 0 15px var(--primary-hover2);
 	box-shadow: 0 0 15px var(--primary-hover2);
 }
 
-.topbarButtonHover{
-  background-color: transparent; /* 初始背景顏色 */
-  border: none; /* 移除邊框 */
-  cursor: pointer; /* 鼠標變為手指圖標 */
-  padding: 10px; /* 按鈕內填充 */
-  border-radius: 5px; /* 圓角 */
-  transition: background-color 0.3s ease; /* 平滑過渡效果 */
+/* header button style */
+.headerControlButton{
+  background-color: transparent; 
+  border: none; 
+  cursor: pointer;
+  padding: 10px; 
+  border-radius: 5px;
+  transition: background-color 0.3s ease; 
 }
-
-.topbarButtonHover:hover{
+.headerControlButton:hover{
   -webkit-box-shadow: 0 0 15px var(--primary-hover2);
 	-moz-box-shadow: 0 0 15px var(--primary-hover2);
 	box-shadow: 0 0 15px var(--primary-hover2);
   background-color: var(--primary-hover2);
 }
+.headerControlButton:active{
+  color: var(--text-white);
+  background-color: var(--primary);
+}
+/* border button */
+.borderButton{
+  background-color: transparent;
+  border: 1px solid var(--primary); 
+  cursor: pointer; 
+  padding: 10px;
+  border-radius: 5px; 
+  transition: background-color 0.3s ease;
+}
+.borderButton:hover{
+  -webkit-box-shadow: 0 0 15px var(--primary-hover2);
+	-moz-box-shadow: 0 0 15px var(--primary-hover2);
+	box-shadow: 0 0 15px var(--primary-hover2);
+}
+.borderButton:active{
+  color: var(--text-white);
+  background-color: var(--primary);
+}
+/* border button disable */
+.borderButton:disabled {
+  color: #ccc;
+  background-color: var(--background-disabled);
+  border: 1px solid var(--border);
+}
+/* audio trash/dowlaod button */
+
+
+
 /* login confirm*/
 .hoverButton-custom {
   background-color: transparent; 
@@ -251,6 +281,11 @@ modalStyle
 	-moz-box-shadow: var(--boxShadow);
 	box-shadow: var(--boxShadow);
   border: none ;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* 確保按鈕不會緊挨輸入框 */
+
 }
 
 /*************************

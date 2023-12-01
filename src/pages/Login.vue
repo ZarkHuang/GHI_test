@@ -9,8 +9,8 @@
         <div class="flex flex-col ">
           <div class="mb-2">
             <p class="subTitle">帳號</p>
-            <input type="text" placeholder="請輸入帳號"
-              class="mt-1 border-[1px] w-full h-10 pl-3 hover:border-2 hover:bg-blue-50 hover:border-blue-100 rounded outline-blue-200"
+            <input type="text" placeholder="請輸入帳號" v-model="username"
+              class="mt-1 border-[1px] w-full h-10 pl-3 hover:border-2  rounded outline-blue-200"
               autocomplete="username" />
 
           </div>
@@ -18,15 +18,15 @@
             <p class="subTitle">密碼</p>
             <div class="relative">
               <input :type="showPassword ? 'text' : 'password'" v-model="password" placeholder="請輸入密碼"
-                class="mt-1  border-[1px] w-full h-10 pl-3 pr-10 hover:border-2 hover:bg-blue-50 hover:border-blue-100 rounded outline-blue-200"
+                class="mt-1 border-[1px] w-full h-10 pl-3 hover:border-2  rounded outline-blue-200"
                 autocomplete="current-password" />
 
               <button type="button" @click="toggleShowPassword" class="absolute inset-y-0 right-0 pr-3 flex items-center">
                 <template v-if="showPassword">
-                  <img :src="eyeClose" alt="">
+                  <eyeClose/>
                 </template>
                 <template v-else>
-                  <img :src="eye" alt="">
+                  <eye/>
                 </template>
               </button>
             </div>
@@ -213,7 +213,7 @@
 import { ref, onMounted } from "vue";
 import { useUserStore } from "@/store/user"
 import { useRouter } from "vue-router";
-import { loginUser , createRandomCode , loginGoogleUser } from "@/apis/authAPI"
+import { loginUser, createRandomCode, loginGoogleUser } from "@/apis/authAPI"
 import { useMessage } from 'naive-ui';
 import ResponsiveLogo from "@/components/ResponsiveLogo.vue";
 import { decodeCredential } from 'vue3-google-login';
@@ -241,35 +241,37 @@ interface GoogleResponse {
   credential: string;
 }
 
-
 const handlerLogin = async () => {
   if (!checkbox.value) {
     message.error('請先閱讀並同意用戶協議與隱私協議');
     return;
   }
 
-
+  // 檢查用戶輸入的帳號密碼是否是假設定的帳號密碼
   try {
-    const response = await loginUser("test", "abc");
-    //FIXME:之後回覆格是要修改
-    if (response.status === 201 && response.data.data.token !== "") {
-      console.log(response.data.data)
-      const token = response.data.data.token;
-      const usernameFromResponse = response.data.data.username;
-      localStorage.setItem("token", token)
-      localStorage.setItem('username', usernameFromResponse)
+      const response = await loginUser(username.value, password.value);
+      console.log(response)
+      if (response.status === 200 && response.data.data.token) {
+        const token = response.data.data.token;
+        localStorage.setItem("token", token)
 
-      const userStore = useUserStore();
-      userStore.login(username.value, token, usernameFromResponse);
-      router.push("/scene");
-      console.log("登入成功");
-    } else {
-      message.error('登入過程出現錯誤');
-    }
-  } catch (error) {
-    console.error("登入過程出現錯誤:", error);
-  }
+        // 使用 API 回傳的 username 或設置一個默認值
+        localStorage.setItem('username', username.value)
+
+        const userStore = useUserStore();
+        userStore.login(username.value, token, username.value);
+        router.push("/scene");
+        console.log("登入成功");
+      } else {
+        message.error('登入過程出現錯誤');
+      }
+    } catch (error) {
+      message.error('登入失敗！帳號或密碼錯誤');
+    }  
 };
+
+
+
 
 const callback = async (response: GoogleResponse) => {
   const userData = decodeCredential(response.credential) as UserData;
@@ -283,16 +285,15 @@ const handlerGoogleLogin = async (userData: UserData) => {
   }
   const res_getrandomcode = await createRandomCode();
   // console.log( res)
-  const randomCode = res_getrandomcode.data.data['token']
-  const res_googleuser = await loginGoogleUser(userData.email,userData.name,randomCode)
+  const randomCode = res_getrandomcode.data.data.token
+  const res_googleuser = await loginGoogleUser(userData.email, userData.name, randomCode)
   console.log(res_googleuser)
   if (res_googleuser.status === 201) {
     const userStore = useUserStore();
-    userStore.login(username.value, res_googleuser.data.data['token'], userData.name);
+    userStore.login(username.value, res_googleuser.data.data.token, userData.name);
     router.push("/scene");
   }
 }
-
 
 const showPrivacyPolicyModal = ref(false);
 const showUserAgreementModal = ref(false);
@@ -361,7 +362,7 @@ onMounted(() => {
 }
 
 .checkForm input[type="checkbox"]:checked::after {
-  content: url('@/assets/icons/check-fill.svg');
+  content: url('@/assets/icons/checkFill.svg');
   position: absolute;
   top: 50%;
   left: 50%;
@@ -390,16 +391,23 @@ onMounted(() => {
   .checkForm {
     text-wrap: nowrap;
   }
-  .checkForm {
-    text-wrap: nowrap;
-  }
+
   .checkForm span,
   .checkForm button {
     font-size: 12px;
   }
+}
 
-  .checkForm input {
-    padding: 6px;
+@media (max-width: 392px) {
+  .checkForm span,
+  .checkForm button {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 330px) {
+  .checkForm {
+    text-wrap: wrap;
   }
 }
 
@@ -408,12 +416,6 @@ onMounted(() => {
   .checkForm {
     text-wrap: nowrap;
   }
-
-  .checkForm span,
-  .checkForm button {
-    font-size: 11px;
-  }
-
   .checkForm input {
     padding: 6px;
   }
@@ -424,14 +426,12 @@ onMounted(() => {
     text-wrap: wrap;
   }
 
-
   .checkForm input {
     padding: 6px;
   }
 }
 
 /* external link style */
-
 .external-link:after {
   display: block;
   left: 0;

@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col items-center">
     <div class="py-2.5 flex items-center justify-between md:w-8/12 w-11/12 border-b-[1px] ">
-      <button @click="goBack" class="topbarButtonHover">
+      <button @click="goBack" class="headerControlButton ">
         <arrowLeft alt="" class="iconStyle" />
       </button>
 
@@ -14,23 +14,23 @@
 
       <!-- 搜索框 -->
       <div class="relative inline-block text-center">
-        <button @click="startSearch" class="topbarButtonHover">
+        <button @click="startSearch" class="headerControlButton">
           <search alt="" class="iconStyle" />
         </button>
 
 
         <!-- 搜索框 -->
-        <div v-if="isSearching" class="absolute right-0 top-full mt-2" id="isSearching"
-          :class="{ 'right-': isMobile, 'm-2': !isMobile }">
+        <div v-if="isSearching" class="absolute right-0 top-full mt-2 transition-all" id="isSearching"
+          :class="{ 'w-auto': isMobile, 'm-2': !isMobile }">
           <div class="modal-shadow flex items-center  bg-primary-hover2 p-4 rounded-lg border">
             <input v-model="searchText" type="text" placeholder="專案名稱/情境類型/狀態"
-              class="custom-placeholder  mr-3 flex-grow border  text-sm font-montserrat py-2.5 p-3 rounded-md focus:border-primary focus:outline-none focus:ring focus:ring-blue-100 transition-all duration-300"
-              style="height:40px" />
+              class="custom-placeholder  mr-3  flex-grow border  text-sm font-montserrat py-2.5 p-3 rounded-md focus:border-primary focus:outline-none focus:ring focus:ring-blue-100 transition-all duration-300"
+              style="height:40px ;" />
             <div class="flex items-center justify-between">
               <button @click="performSearch" class="confirm-button flex items-center"
                 :class="{ 'p-1': isMobile, 'p-4': !isMobile }">搜尋</button>
-              <button @click="cancelSearch" class="confirm-button flex items-center"
-                :class="{ 'p-1': isMobile, 'p-4': !isMobile }">取消</button>
+              <!-- <button @click="cancelSearch" class="confirm-button flex items-center"
+                :class="{ 'p-1': isMobile, 'p-4': !isMobile }">取消</button> -->
             </div>
           </div>
         </div>
@@ -83,7 +83,7 @@
             <div class="flex items-center mb-3">
               <label :class="isMobile ? 'w-1/3' : 'w-1/6'" class="text-sm mr-3">專案名稱</label>
               <input v-model="projectSearchText" type="text" placeholder="請輸入專案名稱"
-                class="custom-placeholder w-full border border-primary-hover text-base font-montserrat px-2 rounded-md focus:border-primary focus:outline-none  transition-all duration-300" />
+                class="custom-placeholder mt-1 border-[1px] border-primary-hover w-full h-10 pl-3 hover:border-2  rounded outline-blue-200" />
             </div>
 
             <div class="flex items-center mb-3">
@@ -414,9 +414,32 @@ const rowProps = (row: RowData) => {
 };
 
 // header-Search
+
+// 打開搜尋框並添加監聽器
 const startSearch = () => {
-  isSearching.value = !isSearching.value;
+  if (!isSearching.value) {
+    isSearching.value = true;
+    // 延遲添加全局點擊監聽器，避免立即觸發關閉
+    setTimeout(() => {
+      document.addEventListener('click', handleOutsideClick);
+    }, 0);
+  }
 };
+
+// 關閉搜尋框並移除監聽器
+const cancelSearch = () => {
+  isSearching.value = false;
+  document.removeEventListener('click', handleOutsideClick);
+};
+
+// 處理全局點擊事件
+const handleOutsideClick = (event :any) => {
+  if (!event.target.closest('#isSearching')) {
+    cancelSearch();
+  }
+};
+
+
 
 const performSearch = async () => {
   try {
@@ -440,10 +463,6 @@ const performSearch = async () => {
   }
 };
 
-const cancelSearch = () => {
-  isSearching.value = false; // Hide the input field and search button
-  searchText.value = '';
-};
 
 //狀態選項
 const statusOptions = [
@@ -566,6 +585,7 @@ const columns: ComputedRef<DataTableColumns<RowData>> = computed(() => {
   ];
 });
 
+
 onMounted(async () => {
   window.addEventListener('resize', () => {
     isSmallScreen.value = window.innerWidth < 768;
@@ -579,6 +599,7 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
+  document.removeEventListener('click', handleOutsideClick);
   window.removeEventListener('resize', () => {
     isSmallScreen.value = window.innerWidth < 768;
   });
@@ -656,6 +677,5 @@ button.project-button:active {
     padding: 16px;
   }
 }
-
 
 </style>

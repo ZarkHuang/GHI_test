@@ -80,7 +80,7 @@ export const executeStt = async (project_id: string, scene_type: string, file: F
     console.log(`Sending STT request with project_id: ${project_id}, sceneType: ${scene_type}, file: ${file.name}`);
     const formData = new FormData();
     formData.append('project_id', project_id.toString());
-    formData.append('sceneType', scene_type);
+    formData.append('scene_type', scene_type);
     formData.append('file', file);
     console.log(scene_type)
     return request({

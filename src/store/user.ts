@@ -27,7 +27,7 @@ export const useUserStore = defineStore({
           this.token = token;
           localStorage.setItem('token', token);
           localStorage.setItem('name', name);
-          localStorage.setItem('isLogin', 'true');  // 添加這行
+          localStorage.setItem('isLogin', 'true');
         },
         logout() {
           this.isLogin = false;

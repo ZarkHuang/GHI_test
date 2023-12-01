@@ -52,10 +52,10 @@ import { useRouter } from "vue-router"
 import { useMessage } from 'naive-ui';
 
 // Icon
-import UserInfo from '@/assets/icons/UserInfo.svg'
+import UserInfo from '@/assets/icons/userInfo.svg'
 import logoSmall from '@/assets/icons/logo_small.svg'
 import logoIconSmall from '@/assets/icons/logo_icon_small.svg'
-import BellRing from '@/assets/icons/bell-ring.svg'
+import BellRing from '@/assets/icons/bellRing.svg'
 import key from '@/assets/icons/key.svg'
 import Logout from '@/assets/icons/logout.svg'
 import settings from '@/assets/icons/settings.svg'
@@ -83,6 +83,7 @@ const handlerLogout = () => {
   resetListStatus();
   router.push("/login");
   message.success('您已成功登出');
+  window.location.reload()
 };
 
 
@@ -129,10 +130,6 @@ onUnmounted(() => {
 </script>
 
 <style lang="scss" scoped>
-.Topbar {
-    overflow: hidden;
-}
-
 .dropdown-menu {
     position: absolute;
     right: 4px;

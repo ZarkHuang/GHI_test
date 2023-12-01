@@ -1,9 +1,10 @@
 <template>
   <div class="flex  items-center flex-col ">
     <div class="py-2.5 flex items-center justify-between md:w-8/12 w-11/12 border-b-[1px]">
-      <button @click="goBack" class="hoverButton topbarButtonHover">
+      <button @click="goBack" class="headerControlButton p-2.5">
         <arrowLeft alt="" class="iconStyle" />
       </button>
+      
       <div class="text-center flex-grow md:w-8/12 w-10/12">
         <p class=" text-xs">
           {{ sceneTitle }}
@@ -13,7 +14,7 @@
         </h4>
       </div>
 
-      <button @click="showEditModal" class="hoverButton topbarButtonHover">
+      <button @click="showEditModal" class="headerControlButton p-2.5">
         <pen alt="" class="iconStyle" />
       </button>
 
@@ -64,10 +65,10 @@
       </div>
     </template>
     <template v-else-if="projectStatus === 'init' && showMicrophoneAnimation">
-  <div class="flex justify-center items-center overlay">
-    <div class="flex flex-col justify-center items-center h-full">
-        <MicrophoneAnimation :paused="isPaused" @toggle-recording="handleRecordingToggle"
-          :recordingTime="formattedRecordingTime" :disabled="isPauseButtonDisabled" class="disabled:opacity-25"/>
+      <div class="flex justify-center items-center overlay">
+        <div class="text-center mt-20">
+          <MicrophoneAnimation :paused="isPaused" @toggle-recording="handleRecordingToggle"
+            :recordingTime="formattedRecordingTime" :disabled="isPauseButtonDisabled" class="disabled:opacity-25" />
           <div
             class="audioButton flex flex-col sm:flex-row justify-center items-center space-x-0 sm:space-x-2 space-y-2 sm:space-y-0 mt-24">
             <button @click="toggleRecording" :disabled="isPauseButtonDisabled"
@@ -94,8 +95,8 @@
             </button>
 
             <n-modal v-model:show="showRecordingLimitModal"
-            class="bg-white py-10 px-4 rounded-lg shadow-md border border-blue-300">
-            <n-card bordered :style="`width: ${isMobile ? '340px' : '420px'}; height: ${isMobile ? '220px' : '220px'}`">
+              class="bg-white py-10 px-4 rounded-lg shadow-md border border-blue-300">
+              <n-card bordered :style="`width: ${isMobile ? '340px' : '420px'}; height: ${isMobile ? '220px' : '220px'}`">
                 <h4 class="text-xl font-bold pb-2 text-center">錄音時間已達上限</h4>
                 <p class="text-base  text-center">已達錄音上限8分鐘，將結束錄音並產生報告。</p>
                 <n-space justify="center" class="mt-5">
@@ -134,7 +135,7 @@
         </div>
 
 
-
+        <!-- 這是小螢幕 -->
         <!-- 語音辨識結果 -->
         <div v-if="currentTab === 'sttResult'">
           <!-- 語音辨識結果的內容 -->
@@ -148,7 +149,7 @@
               </div>
               <div class="flex-shrink-0 flex items-center py-2 px-1 space-x-2">
                 <!-- 垃圾icon -->
-                <button @click="confirmDelete">
+                <button @click="confirmDelete" class="headerControlButton mb-1">
                   <trashCart />
                 </button>
 
@@ -163,8 +164,21 @@
                     </n-space>
                   </n-card>
                 </n-modal>
+
+                <n-modal v-model:show="showDeleteConfirmation"
+                  class="bg-white p-10 rounded-lg shadow-md border border-blue-300">
+                  <n-card bordered :style="`width: ${isMobile ? '340px' : '400px'}`">
+                    <h4 class="text-xl font-bold pb-2 text-center">確定要刪除語音檔案？</h4>
+                    <p class="text-base  text-center">語音檔案刪除後將無法復原</p>
+                    <n-space justify="center" class="mt-5">
+                      <button class="confirm-button flex items-center" @click="cancelDelete">取消</button>
+                      <button class="confirm-button flex items-center" @click="executeDelete">確定</button>
+                    </n-space>
+                  </n-card>
+                </n-modal>
+
                 <!-- 下載icon -->
-                <button @click="downloadAudio" class="mt-1">
+                <button @click="downloadAudio" class="headerControlButton">
                   <downloadBlack />
                 </button>
               </div>
@@ -178,15 +192,15 @@
             </div>
             <div class="px-4 pb-4 flex">
               <button
-                class="mx-2 flex items-center justify-center gap-2 rounded-md h-10 w-full bg-white border border-blue-300 hoverhover:shadow-md hover:shadow-blue-300/20 transition duration-300 ease-in-out disabled:opacity-50 button-style"
-                @click="reExecuteStt">
+                class="mx-2 flex items-center justify-center gap-2 rounded-md h-10 w-full transition duration-300 ease-in-out disabled:opacity-50 borderButton"
+                @click="reExecuteStt" :disabled="isSttButtonDisabled">
                 <n-icon class="h-4 w-4 flex items-center">
                   <refresh />
                 </n-icon>
                 重新辨識
               </button>
               <button
-                class="mx-2 flex items-center justify-center gap-2 rounded-md h-10 w-full bg-white border border-blue-300 hoverhover:shadow-md hover:shadow-blue-300/20 transition duration-300 ease-in-out disabled:opacity-50 button-style"
+                class="mx-2 flex items-center justify-center gap-2 rounded-md h-10 w-full transition duration-300 ease-in-out disabled:opacity-50 borderButton"
                 :disabled="!isSttTextChanged" @click="updateSttContent">
                 <img :src="paper" alt=""
                   :class="{ 'filter grayscale': isSttTextChanged, 'opacity-30': !isSttTextChanged }" />
@@ -209,20 +223,18 @@
               <!-- 如果是Nursing狀態顯示 -->
               <div v-if="scene === 'Nursing'"
                 class="input-style s-input-style w-full border border-slate-300 rounded-md py-2 pl-3 pr-3 shadow-sm overflow-y-auto max-h-[200px] resize-none">
-                <div v-for="(item, index) in llm_result_test" :key="index" class="flex gap-2 mb-5">
-                  <div v-if="item[0] !== '結果生成中 ...'"
-                    class="bg-primary rounded-md flex mr-2 justify-center items-center tagStyle">
+                <div v-for="(item, index) in llm_result_test" :key="index" class="flex gap-2">
+                  <!-- 只有當存在有效的 DART 標籤時才顯示上色標籤 -->
+                  <div v-if="item[0] && 'DART'.includes(item[0])"
+                    class="bg-primary rounded-md flex mr-2 justify-center items-center mt-0.5 tagStyle">
                     <p class="text-white text-sm">{{ item[0] }}</p>
                   </div>
-
-                  <p v-else class="text-base">{{ item[0] }}</p>
-
                   <p>{{ item[1] }}</p>
                 </div>
               </div>
               <!-- 如果場景是其他狀態就顯示 -->
               <textarea v-else
-                class="input-style s-input-style w-full border border-slate-300 rounded-md pl-3 pr-3 shadow-sm  resize-none"
+                class="input-style s-input-style w-full border border-slate-300 rounded-md pl-3 pr-3 py-2 shadow-sm  resize-none"
                 placeholder="資料讀取中..." v-model="editableLlmText" rows="4" readonly>
             </textarea>
 
@@ -230,15 +242,15 @@
             </div>
             <div class="px-6 p-4 flex">
               <button
-                class="mx-2 flex items-center justify-center gap-2 rounded-md h-10 w-full bg-white border border-blue-300 hoverhover:shadow-md hover:shadow-blue-300/20 transition duration-300 ease-in-out disabled:opacity-50 button-style"
-                @click="reExecutellm">
+                class="mx-2 flex items-center justify-center gap-2 rounded-md h-10 w-full transition duration-300 ease-in-out disabled:opacity-50 borderButton"
+                :disabled="isLLMButtonDisabled" @click="reExecutellm">
                 <n-icon class="h-4 w-4 flex items-center">
                   <refresh />
                 </n-icon>
                 重新辨識
               </button>
               <button
-                class="flex items-center justify-center gap-2 rounded-md h-10 w-full bg-white border border-blue-300 hoverhover:shadow-md hover:shadow-blue-300/20 transition duration-300 ease-in-out disabled:opacity-50 button-style"
+                class="flex items-center justify-center gap-2 rounded-md h-10 w-full transition duration-300 ease-in-out disabled:opacity-50 borderButton"
                 @click="downloadReport">
                 <n-icon class="h-4 w-4 flex items-center">
                   <downloadBlack />
@@ -256,7 +268,9 @@
         </div>
       </div>
 
-      <!-- 這是大螢幕 -->
+      <!--------------- 
+        這是大螢幕
+      ----------------->
       <div v-else class="w-full">
         <div class="md:w-8/12 w-11/12 rounded overflow-hidden shadow-lg mx-auto mt-8">
           <div class="flex items-end px-8 ">
@@ -265,9 +279,9 @@
               <AudioPlayer v-if="audioUrl" :audio-url="audioUrl" />
               <div v-else>音樂檔案尚未加載</div>
             </div>
-            <div class="flex-shrink-0 flex items-center py-2 px-1 space-x-2">
+            <div class="flex-shrink-0 flex items-center  px-1 space-x-2">
 
-              <button @click="confirmDelete">
+              <button @click="confirmDelete" class="headerControlButton mb-1" >
                 <trashCart />
               </button>
 
@@ -283,7 +297,7 @@
                 </n-card>
               </n-modal>
 
-              <button @click="downloadAudio" class="mt-1">
+              <button @click="downloadAudio" class="headerControlButton">
                 <downloadBlack />
               </button>
             </div>
@@ -299,13 +313,13 @@
           </div>
           <div class="px-6 pb-6 flex">
             <button
-              class="mx-2 flex items-center justify-center gap-2 rounded-md h-10 w-full bg-white border border-blue-300 hoverhover:shadow-md hover:shadow-blue-300/20 transition duration-300 ease-in-out disabled:opacity-50 button-style"
-              @click="reExecuteStt">
+              class="mx-2 flex items-center justify-center gap-2 rounded-md h-10 w-full transition duration-300 ease-in-out disabled:opacity-50 borderButton"
+              @click="reExecuteStt" :disabled="isSttButtonDisabled">
               <refresh />
               重新辨識
             </button>
             <button
-              class="mx-2 flex items-center justify-center gap-2 rounded-md h-10 w-full bg-white border border-blue-300 hoverhover:shadow-md hover:shadow-blue-300/20 transition duration-300 ease-in-out disabled:opacity-50 button-style"
+              class="mx-2 flex items-center justify-center gap-2 rounded-md h-10 w-full transition duration-300 ease-in-out disabled:opacity-50 borderButton"
               :disabled="!isSttTextChanged" @click="updateSttContent">
               <paper :class="{ 'filter grayscale': isSttTextChanged, 'opacity-30': !isSttTextChanged }" />
               更新內容
@@ -320,13 +334,15 @@
             <div v-if="scene === 'Nursing'"
               class="input-style s-input-style w-full border border-slate-300 rounded-md py-2 pl-3 pr-3 shadow-sm overflow-y-auto max-h-[200px] resize-none">
               <div v-for="(item, index) in llm_result_test" :key="index" class="flex gap-2">
-                <div v-if="item[0] !== '結果生成中 ...'"
+                <!-- 只有當存在有效的 DART 標籤時才顯示上色標籤 -->
+                <div v-if="item[0] && 'DART'.includes(item[0])"
                   class="bg-primary rounded-md flex mr-2 justify-center items-center mt-0.5 tagStyle">
                   <p class="text-white text-sm">{{ item[0] }}</p>
                 </div>
                 <p>{{ item[1] }}</p>
               </div>
             </div>
+
             <!-- 如果場景是其他狀態就顯示 -->
             <textarea v-else
               class="input-style s-input-style w-full border border-slate-300 rounded-md py-2 pl-3 pr-3 shadow-sm  resize-none"
@@ -337,13 +353,13 @@
           </div>
           <div class="px-6 p-5 flex">
             <button
-              class="mx-2 flex items-center justify-center gap-2 rounded-md h-10 w-full bg-white border border-blue-300 hoverhover:shadow-md hover:shadow-blue-300/20 transition duration-300 ease-in-out disabled:opacity-50 button-style"
-              @click="reExecutellm">
+              class="mx-2 flex items-center justify-center gap-2 rounded-md h-10 w-full transition duration-300 ease-in-out disabled:opacity-50 borderButton"
+              :disabled="isLLMButtonDisabled" @click="reExecutellm">
               <refresh />
               重新辨識
             </button>
             <button
-              class="mx-2 flex items-center justify-center gap-2 rounded-md h-10 w-full bg-white border border-blue-300 hoverhover:shadow-md hover:shadow-blue-300/20 transition duration-300 ease-in-out disabled:opacity-50 button-style"
+              class="mx-2 flex items-center justify-center gap-2 rounded-md h-10 w-full transition duration-300 ease-in-out disabled:opacity-50 borderButton"
               @click="downloadReport">
               <downloadBlack />
               下載報告
@@ -373,7 +389,7 @@ import MicrophoneAnimation from "@/components/MicrophoneAnimation.vue";
 import AudioPlayer from "@/components/AudioPlayer.vue"
 import Loader from '@/components/Loader.vue'
 import { jsPDF } from "jspdf";
-
+import { font } from "@/assets/customFont.ts"
 import mqtt from "mqtt"
 import axios from 'axios';
 // icon
@@ -384,8 +400,8 @@ import refresh from '@/assets/icons/refresh.svg'
 import arrowLeft from '@/assets/icons/arrowLeft.svg'
 import pen from '@/assets/icons/pen.svg'
 import Stop from '@/assets/icons/stop.svg'
-import Feeback from '@/assets/icons/Feeback.svg'
-import MicOn from '@/assets/icons/mic-on.svg'
+import Feeback from '@/assets/icons/feedBack.svg'
+import MicOn from '@/assets/icons/micOn.svg'
 
 const projectStatus = ref('init');
 const message = useMessage();
@@ -416,6 +432,20 @@ const isButtonDisabled = ref(false);
 const isReExecuteSttButtonDisabled = ref(false);
 const showRecordingLimitModal = ref(false);
 const isPauseButtonDisabled = ref(false);
+const isLLMButtonDisabled = ref(false);
+const isSttButtonDisabled = ref(false);
+
+
+const pdf = new jsPDF({
+  orientation: 'landscape',
+  unit: 'mm',
+  format: 'a4'
+
+});
+
+pdf.addFileToVFS("CustomFont.ttf", font);
+pdf.addFont("CustomFont.ttf", "CustomFont", "normal");
+
 
 window.addEventListener('resize', () => {
   windowWidth.value = window.innerWidth;
@@ -470,21 +500,20 @@ const fetchProjectDetails = async () => {
 };
 
 
-// DOAT文字重新整理並上色
 const llm_result_test = computed(() => {
-  // 檢查是否為待處理狀態或非 Nursing 场景
   if (editableLlmText.value === '結果生成中 ...' || scene !== 'Nursing') {
-    // 直接返回未經處理的原始數據
-    return editableLlmText.value.split("\n").map(item => [item]);
+    return [['', editableLlmText.value]];
   }
 
   const list = editableLlmText.value.split("\n");
-  let returnList: any[] = [];
-
+  let returnList: any = [];
   list.forEach((item) => {
-    const keyvalue = item.split(":");
-    const obj = [keyvalue[0], keyvalue.slice(1).join(":")]; // 確保如果 ":" 出現多次，也能正確處理
-    returnList.push(obj);
+    const match = item.match(/^([DART]):\s*(.*)$/);
+    if (match) {
+      returnList.push([match[1], match[2]]);
+    } else {
+      returnList.push(['', item]);  // 如果不符合 DART 格式，不加標籤
+    }
   });
 
   return returnList;
@@ -584,8 +613,8 @@ const showEditModal = () => {
 
 
 // 限制錄音時間
-// const MAX_RECORDING_TIME = 480; // 最大錄音時間（秒）
-const MAX_RECORDING_TIME = 5; // 最大錄音時間（秒）
+const MAX_RECORDING_TIME = 480; // 最大錄音時間480（秒）
+// const MAX_RECORDING_TIME = 5; // 最大錄音時間5（秒）
 const checkRecordingTime = () => {
   if (recordingTime.value >= MAX_RECORDING_TIME) {
     isPauseButtonDisabled.value = true;
@@ -683,7 +712,7 @@ const stopRecording = () => {
         // 獲取語音辨識結果
         editableLlmText.value = '結果生成中 ...';
         editableSttText.value = sttResponse.data;
-        isInference.value = true; // 更新狀態以顯示成功的模板
+        isInference.value = true;
         message.success('檔案上傳成功')
 
         fetchProjectDetails();
@@ -836,6 +865,7 @@ const reExecuteStt = async () => {
     return;
   }
   isReExecuteSttButtonDisabled.value = true;
+  isLLMButtonDisabled.value = true;
   try {
     let result = await fetch(audioUrl.value);
     let blob = await result.blob();
@@ -845,6 +875,7 @@ const reExecuteStt = async () => {
     });
     const response = await executeStt(projectId, scene, file);
     editableSttText.value = response.data.data;
+    console.log(response.data.data)
     editableSttText.value = '結果生成中...';
   } catch (error) {
     console.error('重新辨識時出錯:', error);
@@ -854,7 +885,7 @@ const reExecuteStt = async () => {
 };
 
 const reExecutellm = async () => {
-  isButtonDisabled.value = true;
+  isSttButtonDisabled.value = true;
   await handlerLLM();
   isButtonDisabled.value = false;
 };
@@ -872,167 +903,156 @@ const handleSttInput = () => {
 
 const handlerLLM = async () => {
   const llmResponse = await executeLlm(projectId, scene);
-  console.log('LLM Response:', llmResponse.data);
+  console.log('LLM Response:', llmResponse.data.data);
   editableLlmText.value = '結果生成中 ...';
-
+  isLLMButtonDisabled.value = false;
 };
 
 // 下載橫向 PDF 報告的方法
-const downloadReport = () => {
-  const pdf = new jsPDF({
-    orientation: 'landscape',
-    unit: 'mm',
-    format: 'a4'
-  });
+  const downloadReport = () => {
+    pdf.setFont("CustomFont", "normal");
 
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const margin = 10;
+    const maxWidth = pageWidth - margin * 2; // 計算最大寬度
+    const lineHeight = 10; // 行高
 
-  const pageWidth = pdf.internal.pageSize.getWidth();
-  const margin = 10;
-  const maxWidth = pageWidth - margin * 2; // 計算最大寬度
-  const lineHeight = 10; // 行高
+    // 將文字分割成多行
+    const lines = pdf.splitTextToSize(editableLlmText.value, maxWidth);
+    let yPosition = 10; // 初始 y 位置
 
-  // 將文字分割成多行
-  const lines = pdf.splitTextToSize(editableLlmText.value, maxWidth);
-  let yPosition = 10; // 初始 y 位置
-
-  // 迴圈遍歷每一個文字
-  for (let i = 0; i < lines.length; i++) {
-    if (yPosition > pdf.internal.pageSize.getHeight() - margin) {
-      pdf.addPage(); // 添加新页面
-      yPosition = margin; // 重置 y 位置
+    // 迴圈遍歷每一個文字
+    for (let i = 0; i < lines.length; i++) {
+      if (yPosition > pdf.internal.pageSize.getHeight() - margin) {
+        pdf.addPage(); // 添加新页面
+        yPosition = margin; // 重置 y 位置
+      }
+      pdf.text(lines[i], margin, yPosition); // 添加文本到 PDF
+      yPosition += lineHeight; // 增加 y 位置
     }
-    pdf.text(lines[i], margin, yPosition); // 添加文本到 PDF
-    yPosition += lineHeight; // 增加 y 位置
-  }
 
-  pdf.save("report.pdf");
-};
+    pdf.save("report.pdf");
+  };
 
 
-// 下載音檔的方法
-const downloadAudio = async () => {
-  if (audioUrl.value) {
-    try {
-      const response = await axios.get(audioUrl.value, { responseType: 'blob' });
-      const url = window.URL.createObjectURL(new Blob([response.data.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', 'recording.wav');
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error('下载音檔時發生錯誤:', error);
-      message.error('下载失败');
-    }
-  } else {
-    message.error('沒有文件可下载');
-  }
-};
-
-
-
-/****************************************************************
-  Websocket相關function
-*****************************************************************/
-
-let client = ref<mqtt.MqttClient>()
-const userName = ref("")
-const CreateChannel = async () => {
-  try {
-    const result = await createWebSocket();
-
-    if (result.status === 200) {
-      console.log(result.data);
-      const message = result.data.data.message;
-      userName.value = message.split(" ")[1];
-      ConnectChannel(); // 確保 ConnectChannel 函式在這個範圍內
+  // 下載音檔的方法
+  const downloadAudio = async () => {
+    if (audioUrl.value) {
+      try {
+        const response = await axios.get(audioUrl.value, { responseType: 'blob' });
+        const url = window.URL.createObjectURL(new Blob([response.data.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'recording.wav');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error('下载音檔時發生錯誤:', error);
+        message.error('下载失败');
+      }
     } else {
-      console.log("Create ERROR");
+      message.error('沒有文件可下载');
     }
-  } catch (error) {
-    console.error("Error creating WebSocket channel:", error);
+  };
+
+
+
+  /****************************************************************
+    Websocket相關function
+  *****************************************************************/
+
+  let client = ref<mqtt.MqttClient>()
+  const userName = ref("")
+  const CreateChannel = async () => {
+    try {
+      const result = await createWebSocket();
+
+      if (result.status === 200) {
+        console.log(result.data);
+        const message = result.data.data.message;
+        userName.value = message.split(" ")[1];
+        ConnectChannel(); // 確保 ConnectChannel 函式在這個範圍內
+      } else {
+        console.log("Create ERROR");
+      }
+    } catch (error) {
+      console.error("Error creating WebSocket channel:", error);
+    }
+
+    fetchProjectDetails(); // 根據需要調整這一步
   }
 
-  fetchProjectDetails(); // 根據需要調整這一步
-}
-
-const ConnectChannel = async () => {
-  client.value = mqtt.connect(import.meta.env.VITE_WEBSOCKET_HOST, {
-    username: "ghi:ghi",
-    password: "ghi",
-    clientId: userName.value,
-    keepalive: 10,
-  });
-  client.value!.on("connect", () => {
-    client.value!.subscribe(`${userName.value}.llm`, { qos: 1 });
-    client.value!.subscribe(`${userName.value}.stt`, { qos: 1 });
-    console.log("Connect success")
-  });
+  const ConnectChannel = async () => {
+    client.value = mqtt.connect(import.meta.env.VITE_WEBSOCKET_HOST, {
+      username: "ghi:ghi",
+      password: "ghi",
+      clientId: userName.value,
+      keepalive: 10,
+    });
+    client.value!.on("connect", () => {
+      client.value!.subscribe(`${userName.value}.llm`, { qos: 1 });
+      client.value!.subscribe(`${userName.value}.stt`, { qos: 1 });
+      console.log("Connect success")
+    });
 
 
-  client.value!.on("error", (event) => {
-    console.log(event)
-  });
+    client.value!.on("error", (event) => {
+      console.log(event)
+    });
 
-  client.value!.on("message", (topic, _) => {
-    if (topic.indexOf("stt") > -1) {
-      console.log("STT 完成")
-      handlerLLM()
-      console.log("開始文字辨識")
-    }
-    fetchProjectDetails()
-  });
-}
-
-CreateChannel()
-
-const isSmallScreen = ref(window.innerWidth < 768);
-
-
-onMounted(async () => {
-  window.addEventListener('resize', () => {
-    isSmallScreen.value = window.innerWidth < 768;
-  });
-  try {
-    fetchAndProcessProjects();
-    fetchProjectDetails();
-
-
-  } catch (error) {
-    console.error("屬據處理有問題:", error);
+    client.value!.on("message", (topic, _) => {
+      if (topic.indexOf("stt") > -1) {
+        console.log("STT 完成")
+        handlerLLM()
+        console.log("開始文字辨識")
+      }
+      fetchProjectDetails()
+      isSttButtonDisabled.value = false;
+    });
   }
-});
 
-onUnmounted(() => {
-  window.removeEventListener('resize', () => {
-    isSmallScreen.value = window.innerWidth < 768;
-  });
-});
+  CreateChannel()
+  const isSmallScreen = ref(window.innerWidth < 768);
 
-onBeforeUnmount(async () => {
-  clearInterval(intervalId as number);
-  try {
-    client.value!.end();
 
-    const result = await deleteWebSocket();
-    if (result.status == 200) {
-      console.log("Delete SUCCESS");
+  onMounted(async () => {
+    window.addEventListener('resize', () => {
+      isSmallScreen.value = window.innerWidth < 768;
+    });
+    try {
+      fetchAndProcessProjects();
+      fetchProjectDetails();
+
+
+    } catch (error) {
+      console.error("屬據處理有問題:", error);
     }
-  } catch (error) {
-    console.error("Error deleting WebSocket channel:", error);
-  }
-});
+  });
+
+  onUnmounted(() => {
+    window.removeEventListener('resize', () => {
+      isSmallScreen.value = window.innerWidth < 768;
+    });
+  });
+
+  onBeforeUnmount(async () => {
+    clearInterval(intervalId as number);
+    try {
+      client.value!.end();
+
+      const result = await deleteWebSocket();
+      if (result.status == 200) {
+        console.log("Delete SUCCESS");
+      }
+    } catch (error) {
+      console.error("Error deleting WebSocket channel:", error);
+    }
+  });
 </script>
 
 <style scoped>
-.overlay {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh; /* 使用視窗高度確保垂直居中 */
-}
 .cards {
   display: flex;
   flex-wrap: wrap;
@@ -1149,18 +1169,15 @@ onBeforeUnmount(async () => {
   .iconSize {
     font-size: 3.5rem;
   }
-}
 
-.button-style:disabled {
-  color: #ccc;
-  /* 深灰色文字 */
-  background-color: var(--background-disabled);
-  border: 1px solid var(--border);
+  .flex-shrink-0{
+    padding: 0;
+  }
 }
 
 .audioButton {
   position: absolute;
-  top: 70%;
+  top: 65%;
   left: 50%;
   transform: translate(-50%, -50%);
 }
@@ -1185,20 +1202,17 @@ onBeforeUnmount(async () => {
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  gap: 8px;
-  /* 替代 space-x-2 */
-  padding: 8px 4px;
 }
 
 @media (max-width: 375px) {
   .flex-container {
     flex-wrap: wrap;
   }
-
-  .flex-shrink-0 {
-    justify-content: center;
-    padding-bottom: 20px;
+  
+  .flex-shrink-0{
+    padding-bottom: 10px;
   }
+
 }
 
 .confirm-button {

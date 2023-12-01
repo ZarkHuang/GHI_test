@@ -1,5 +1,6 @@
 import request from "@/apis/axios"
 
+
 export const loginUser = async(user:string,pwd:string)=>{
     const data ={
         account:user,
@@ -8,7 +9,8 @@ export const loginUser = async(user:string,pwd:string)=>{
    return request({
     url :'/login',
     method: 'post', 
-    data:data   
+    data:data,
+
    })
 }
  

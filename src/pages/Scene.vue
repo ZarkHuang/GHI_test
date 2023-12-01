@@ -19,12 +19,12 @@ import { useRouter } from "vue-router";
 // icon
 const FirstVist = defineAsyncComponent(() => import('@/assets/icons/firstVisit.svg'));
 const FirstVisitWhite = defineAsyncComponent(() => import('@/assets/icons/firstVisitWhite.svg'));
-const Nursing = defineAsyncComponent(() => import('@/assets/icons/Nursing.svg'));
-const NursingWhite = defineAsyncComponent(() => import('@/assets/icons/NursingWhite.svg'));
-const Heart = defineAsyncComponent(() => import('@/assets/icons/Heart.svg'));
-const HeartWhite = defineAsyncComponent(() => import('@/assets/icons/HeartWhite.svg'));
-const ThyroidUS = defineAsyncComponent(() => import('@/assets/icons/ThyroidUS.svg'));
-const ThyroidUSWhite = defineAsyncComponent(() => import('@/assets/icons/ThyroidUSWhite.svg'));
+const Nursing = defineAsyncComponent(() => import('@/assets/icons/nursing.svg'));
+const NursingWhite = defineAsyncComponent(() => import('@/assets/icons/nursingWhite.svg'));
+const Heart = defineAsyncComponent(() => import('@/assets/icons/heart.svg'));
+const HeartWhite = defineAsyncComponent(() => import('@/assets/icons/heartWhite.svg'));
+const ThyroidUS = defineAsyncComponent(() => import('@/assets/icons/thyroidUS.svg'));
+const ThyroidUSWhite = defineAsyncComponent(() => import('@/assets/icons/thyroidUSWhite.svg'));
 const meeting = defineAsyncComponent(() => import('@/assets/icons/meeting.svg'));
 const meetingWhite = defineAsyncComponent(() => import('@/assets/icons/meetingWhite.svg'));
 const weekSummary = defineAsyncComponent(() => import('@/assets/icons/weekSummary.svg'));
