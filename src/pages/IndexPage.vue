@@ -20,6 +20,13 @@
 
       <n-modal v-model:show="showModal" class="bg-white p-6 rounded-lg shadow-md border border-blue-300">
         <n-card :style="`width: ${isMobile ? '340px' : '600px'}`">
+          <button class="absolute top-3 right-3" @click="showModal = false">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round" class="feather feather-x w-3 h-3 sm:w-3 sm:h-3">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
           <h4 class="text-xl font-bold pb-6 text-center">編輯專案名稱</h4>
           <n-input v-model:value="temporaryProjectName" placeholder="輸入新的專案名稱" />
           <n-space justify="center" class="mt-5">
@@ -156,6 +163,13 @@
                 <n-modal v-model:show="showDeleteConfirmation"
                   class="bg-white p-10 rounded-lg shadow-md border border-blue-300">
                   <n-card bordered :style="`width: ${isMobile ? '340px' : '400px'}`">
+                    <button class="absolute top-3 right-3" @click="showDeleteConfirmation = false">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round" class="feather feather-x w-3 h-3 sm:w-3 sm:h-3">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
                     <h4 class="text-xl font-bold pb-2 text-center">確定要刪除語音檔案？</h4>
                     <p class="text-base  text-center">語音檔案刪除後將無法復原</p>
                     <n-space justify="center" class="mt-5">
@@ -288,6 +302,13 @@
               <n-modal v-model:show="showDeleteConfirmation"
                 class="bg-white p-10 rounded-lg shadow-md border border-blue-300">
                 <n-card bordered :style="`width: ${isMobile ? '340px' : '400px'}`">
+                  <button class="absolute top-3 right-3" @click="showDeleteConfirmation = false">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round" class="feather feather-x w-3 h-3 sm:w-3 sm:h-3">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
                   <h4 class="text-xl font-bold pb-2 text-center">確定要刪除語音檔案？</h4>
                   <p class="text-base  text-center">語音檔案刪除後將無法復原</p>
                   <n-space justify="center" class="mt-5">

@@ -77,7 +77,13 @@
       <n-modal v-model:show="showModalRef" class="modalStyle">
         <n-card class="text-center" style="width: 600px" :bordered="false"
           :style="`width: ${isMobile ? '340px' : '600px'}`" role="dialog" aria-modal="true">
-
+          <button class="absolute top-3 right-3" @click="showModalRef = false">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round" class="feather feather-x w-3 h-3 sm:w-3 sm:h-3">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
           <h4 class="font-bold text-xl flex justify-center items-center mb-6">進階搜尋</h4>
           <div class="text-start">
             <div class="flex items-center mb-3">
@@ -86,12 +92,16 @@
                 class="custom-placeholder mt-1 border-[1px] border-primary-hover w-full h-10 pl-3 hover:border-2  rounded outline-blue-200" />
             </div>
 
-            <div class="flex items-center mb-3">
-              <label :class="isMobile ? 'w-1/3' : 'w-1/6'" class="text-sm mr-3">狀態</label>
-              <n-select
-                class="custom-placeholder w-full border border-primary-hover text-base font-montserrat  rounded-md  hover:text-white transition-all duration-300"
-                v-model:value="selectedOption" :options="statusOptions" placeholder="請選擇狀態" />
-            </div>
+<div class="flex items-center mb-3">
+  <label :class="isMobile ? 'w-1/3' : 'w-1/6'" class="text-sm mr-3">狀態</label>
+  <select v-model="selectedOption" class="custom-select w-full h-10 pl-3 pr-8 rounded-md border border-primary-hover text-base font-montserrat focus:outline-none focus:border-primary">
+    <option disabled value="" selected>請選擇狀態</option>
+    <option v-for="option in statusOptions" :key="option.value" :value="option.value">
+      {{ option.label }}
+    </option>
+  </select>
+</div>
+
 
             <!-- <div class="flex items-center mb-3 ">
               <label :class="isMobile ? 'w-1/3' : 'w-1/6'" class="text-sm mr-3">群組</label>
@@ -101,9 +111,12 @@
             </div> -->
             <div class="flex items-center mb-3">
               <label :class="isMobile ? 'w-1/3' : 'w-1/6'" class="text-sm mr-3">上傳人員</label>
-              <n-select
-                class="custom-placeholder w-full border border-primary-hover text-base font-montserrat  rounded-md  transition-all duration-300"
-                v-model:value="selectedOwner" :options="ownerOptions" placeholder="請選擇人員" />
+              <select v-model="selectedOwner" class="custom-select w-full h-10 pl-3 pr-8 rounded-md border border-primary-hover text-base font-montserrat focus:outline-none focus:border-primary">
+      <option disabled value="">請選擇人員</option>
+      <option v-for="option in ownerOptions" :key="option.value" :value="option.value">
+        {{ option.label }}
+      </option>
+    </select>
             </div>
 
             <div class="flex items-center">
@@ -676,6 +689,32 @@ button.project-button:active {
     max-height: 31px;
     padding: 16px;
   }
+}
+
+.custom-select {
+  height: 36px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: url('data:image/svg+xml;utf8,<svg fill="%23000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 1.25em;
+}
+
+
+.custom-placeholder:hover {
+  -webkit-box-shadow: 0 0 5px var(--primary-hover);
+  -moz-box-shadow: 0 0 5px var(--primary-hover);
+  box-shadow: 0 0 5px var(--primary-hover);
+  /* border: 1px solid var(--primary-hover); */
+}
+
+.custom-placeholder::placeholder {
+  color: rgba(194, 194, 194, 1);
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 1px;
+  padding: 2px;
 }
 
 </style>

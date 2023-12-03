@@ -473,3 +473,14 @@ button:disabled {
   pointer-events: none;
   cursor: not-allowed; /* 或 cursor: default; 根據您的需求 */
 }
+
+.n-base-selection-input:active{
+  color: var(--primary);
+}
+
+.n-base-selection-input:hover{
+  background-color: var(--primary);
+}
+.n-base-selection-input__contentL:active{
+  color: var(--primary);
+}

@@ -101,6 +101,13 @@
         <n-card class="modalStylePublic modal-content text-center">
           <h2 class=" text-base font-semibold mb-4">隱私權政策</h2>
           <div class="modal-body space-y-4 text-left p-2.5">
+            <button class="absolute top-3 right-3" @click="showPrivacyPolicyModal = false">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round" class="feather feather-x w-3 h-3 sm:w-3 sm:h-3">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
             <!-- 模态内容 -->
             此隱私權政策說明長佳智能股份有限公司（以下簡稱「公司」）如何收集、處理和使用網站上獲得的個人資訊。請仔細閱讀以下隱私權政策條款。
             <br><br>
@@ -134,6 +141,13 @@
         <n-card class="modalStylePublic modal-content text-center">
           <h2 class="text-base font-semibold mb-4">網站使用者協議</h2>
           <div class="modal-body space-y-4 text-left p-2.5">
+            <button class="absolute top-3 right-3" @click="showUserAgreementModal = false">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round" class="feather feather-x w-3 h-3 sm:w-3 sm:h-3">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
             歡迎來到長佳智能智海系統（以下簡稱「本網站」），使用我們所提供之服務。以下所載的條款及條件管理本網站的使用，如果您使用本網站便對您具有法律約束力。如果您不同意其中的任何條款，請不要存取本網站，或以其他方式使用本網站或本網站上包含的任何資訊。請仔細閱讀本條款。
             <br><br>
             當您使用本網站時，即表示您同意接受所有條款的約束，而沒有任何限制或條件，並保證您有完整的權力和授權代表本人和/或作為您雇主的代理人簽訂本網站的使用者協議，以及您有完整的權力和授權承擔此處所述的責任。
@@ -330,9 +344,23 @@ onMounted(() => {
 /* 隱私modal */
 .modal-content {
   width: 90%;
-  max-height: 800px;
+  max-height: 80vh; /* 設定高度為視窗高度的 80% */
   max-width: 855px;
   overflow-y: auto;
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    max-width: 95%; /* 小屏幕時，寬度稍微增加 */
+    max-height: 80vh; /* 小屏幕時，仍保持高度為視窗的 80% */
+  }
+}
+
+@media (max-width: 768px) {
+  .modal-content {
+    max-width: 90%; /* 中型屏幕時的寬度 */
+    max-height: 80vh; /* 中型屏幕時，高度維持不變 */
+  }
 }
 
 .modal-body {
