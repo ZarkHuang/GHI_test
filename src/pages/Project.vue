@@ -60,12 +60,11 @@
         <div v-if="showFilterLabel" class="hidden md:flex items-center filterLabel px-4 rounded-full text-white">
           <button @click="clearFilter"
             class="text-white flex items-center px-4 py-1 bg-blue-300 hover:bg-blue-400 rounded-full ease-in-out duration-300">
-            <filterWhite alt="" class="h-4 w-4 mr-3" />
+            <filterWhite alt="" class="h-3 w-3 mr-3" />
             <span class="text-base mr-3">{{ filterLabel }}</span>
-            <close alt="" srcset="" class="h-4 w-4 mr-3" />
+            <close alt="" srcset="" class="h-3 w-3 mr-3" />
           </button>
         </div>
-
         <button
           class="hidden project-button md:flex  items-center justify-center border border-primary-hover text-base sm:text-base font-montserrat py-2 sm:py-4 px-4 sm:px-6 mx-1 sm:mx-2  rounded-md hover:bg-white hover:shadow-md hover:shadow-blue-300/20 transition duration-300 ease-in-out disabled:opacity-30"
           @click="showModalRef = true">
@@ -89,19 +88,19 @@
             <div class="flex items-center mb-3">
               <label :class="isMobile ? 'w-1/3' : 'w-1/6'" class="text-sm mr-3">專案名稱</label>
               <input v-model="projectSearchText" type="text" placeholder="請輸入專案名稱"
-                class="custom-placeholder mt-1 border-[1px] border-primary-hover w-full h-10 pl-3 hover:border-2  rounded outline-blue-200" />
+                class="custom-placeholder px-2 mt-1  w-full border border-primary-hover  text-base font-montserrat outline-blue-400 rounded-md focus:border-primary transition-all duration-300" />
             </div>
 
-<div class="flex items-center mb-3">
-  <label :class="isMobile ? 'w-1/3' : 'w-1/6'" class="text-sm mr-3">狀態</label>
-  <select v-model="selectedOption" class="custom-select w-full h-10 pl-3 pr-8 rounded-md border border-primary-hover text-base font-montserrat focus:outline-none focus:border-primary">
-    <option disabled value="" selected>請選擇狀態</option>
-    <option v-for="option in statusOptions" :key="option.value" :value="option.value">
-      {{ option.label }}
-    </option>
-  </select>
-</div>
-
+            <div class="flex items-center mb-3">
+              <label :class="isMobile ? 'w-1/3' : 'w-1/6'" class="text-sm mr-3">狀態</label>
+              <select v-model="selectedOption" :class="['custom-select w-full border border-primary-hover text-base font-montserrat outline-blue-400 rounded-md focus:border-primary transition-all duration-300',
+                isOptionSelected ? 'text-text-color' : 'text-text-disabled']">
+                <option disabled value="" selected hidden class="disabled-style">請選擇狀態</option>
+                <option v-for="option in statusOptions" :key="option.value" :value="option.value">
+                  {{ option.label }}
+                </option>
+              </select>
+            </div>
 
             <!-- <div class="flex items-center mb-3 ">
               <label :class="isMobile ? 'w-1/3' : 'w-1/6'" class="text-sm mr-3">群組</label>
@@ -111,20 +110,30 @@
             </div> -->
             <div class="flex items-center mb-3">
               <label :class="isMobile ? 'w-1/3' : 'w-1/6'" class="text-sm mr-3">上傳人員</label>
-              <select v-model="selectedOwner" class="custom-select w-full h-10 pl-3 pr-8 rounded-md border border-primary-hover text-base font-montserrat focus:outline-none focus:border-primary">
-      <option disabled value="">請選擇人員</option>
-      <option v-for="option in ownerOptions" :key="option.value" :value="option.value">
-        {{ option.label }}
-      </option>
-    </select>
+              <select v-model="selectedOwner" :class="['custom-select w-full border border-primary-hover text-base font-montserrat outline-blue-400 rounded-md focus:border-primary transition-all duration-300',
+                isOwnerSelected ? 'text-text-color' : 'text-text-disabled']">
+                <option disabled value="" hidden class="disabled-style">請選擇人員</option>
+                <option v-for="option in ownerOptions" :key="option.value" :value="option.value">
+                  {{ option.label }}
+                </option>
+              </select>
             </div>
 
-            <div class="flex items-center">
-              <label :class="isMobile ? 'w-1/3' : 'w-1/6'" class="text-sm mr-3">時間區間</label>
-              <n-date-picker v-model:value="range" type="daterange" clearable
-                class="custom-placeholder w-full border border-primary-hover  text-base font-montserrat  rounded-md focus:border-primary transition-all duration-300" />
+            <div class="flex items-center mb-3">
+              <label :class="isMobile ? 'w-1/3' : 'w-1/6'" class="text-sm mr-3">建立時間</label>
+              <n-date-picker v-model:value="generateTimeRange" type="daterange" clearable
+                class="custom-placeholder w-full border border-primary-hover text-base font-montserrat rounded-md focus:border-primary transition-all duration-300" />
+            </div>
+
+
+            <div class="flex items-center mb-3">
+              <label :class="isMobile ? 'w-1/3' : 'w-1/6'" class="text-sm mr-3">變更時間</label>
+              <n-date-picker v-model:value="updateTimeRange" type="daterange" clearable
+                class="custom-placeholder w-full border border-primary-hover text-base font-montserrat rounded-md focus:border-primary transition-all duration-300" />
             </div>
           </div>
+
+
 
           <!-- 取消確認 -->
           <div class="mt-6">
@@ -167,7 +176,7 @@ import { zhCN, dateZhCN } from 'naive-ui'
 // icon
 import AddIcon from '@/assets/icons/add.svg'
 import Filter from '@/assets/icons/filter.svg'
-import filterWhite from '@/assets/icons/filterWhite.svg'
+import filterWhite from '@/assets/icons/filterwhite.svg'
 import trashCart from '@/assets/icons/trashCart.svg'
 import search from '@/assets/icons/search.svg'
 import close from '@/assets/icons/close.svg'
@@ -198,7 +207,10 @@ console.log(sceneType)
 const searchText = ref('')
 const isSearching = ref(false)
 const selectedRows = ref<number[]>([])
-const selectedOwner = ref(null);
+const selectedOwner = ref('');
+const isOwnerSelected = computed(() => {
+  return selectedOwner.value !== '';
+});
 const isSmallScreen = ref(window.innerWidth < 768); //螢幕分界
 
 // 定義項目類型，解決Project any類型問題
@@ -269,7 +281,7 @@ const createProject = async () => {
     const currentScene = sceneType.value.toString();
     const newProjectData = {
       project_name: `${currentDate}`,
-      scene_type: `${currentScene}` 
+      scene_type: `${currentScene}`
     };
 
     const response = await postProject(newProjectData);
@@ -307,14 +319,9 @@ const deleteSelectedProjects = async () => {
 
   selectedRows.value = [];
 };
-
-const adjustDate = (dateStr :string) => {
-  const date = new Date(dateStr);
-  date.setDate(date.getDate() + 1); 
-  return date.toISOString().split('T')[0];
-};
-
 const projectSearchText = ref('');
+const generateTimeRange = ref(null);
+const updateTimeRange = ref(null);
 
 
 //篩選專案
@@ -324,25 +331,19 @@ const onPositiveClick = async () => {
     offset: 0,
     rowsPerPage: 100,
     scene_type: sceneType.value,
-    start_date: range.value ? new Date(range.value[0]).toISOString().split('T')[0] : "",
-    end_date: range.value ? adjustDate(new Date(range.value[1]).toISOString().split('T')[0]) : "",
+    update_time_start: updateTimeRange.value ? formatISODate(updateTimeRange.value[0]) : "",
+    update_time_end: updateTimeRange.value ? formatISODate(updateTimeRange.value[1], true) : "",
     project_name: projectSearchText.value,
+    generate_time_start: generateTimeRange.value ? formatISODate(generateTimeRange.value[0]) : "",
+    generate_time_end: generateTimeRange.value ? formatISODate(generateTimeRange.value[1], true) : "",
   };
-  console.log('發送到後端的篩選條件:', filterObj);
+
+  console.log(filterObj.update_time_start)
+  console.log(filterObj.update_time_end)
   try {
-    console.log("篩選（filterObj）：", filterObj);
     const response = await getFilterProjectsByUser(filterObj);
-
     showFilterLabel.value = true;
-
-
-    projects.value = response.data.data.map((project: Project) => {
-      return {
-        ...project,
-        generate_time: new Date(project.generate_time).toLocaleDateString(),
-        update_time: new Date(project.update_time).toLocaleDateString()
-      };
-    });
+    projects.value = response.data.data.map(formatProjectData);
 
     filterLabel.value = `符合篩選： ${projects.value.length} 筆`;
   } catch (error) {
@@ -350,13 +351,37 @@ const onPositiveClick = async () => {
     message.error('篩選項目失敗');
   }
 
-  selectedOption.value = null;
+  selectedOption.value = '';
   showModalRef.value = false;
+};
+
+const formatISODate = (date: string, isEndDate = false) => {
+  const d = new Date(date);
+  if (isEndDate) {
+    // 如果是結束日期，將日期加1以包含選擇的整天
+    d.setDate(d.getDate() + 1);
+  }
+  const year = d.getFullYear();
+  const month = `${d.getMonth() + 1}`.padStart(2, '0');
+  const day = `${d.getDate()}`.padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+
+
+const formatProjectData = (project) => {
+  return {
+    ...project,
+    generate_time: new Date(project.generate_time).toLocaleDateString(),
+    update_time: new Date(project.update_time).toLocaleDateString()
+  };
 };
 
 const temporaryOption = ref('');
 const onNegativeClick = () => {
   temporaryOption.value = ''; // 如果用戶取消就清空選擇
+  selectedOption.value = '';
+  selectedOwner.value = '';
   message.info('已取消');
   showModalRef.value = false;
 };
@@ -384,10 +409,13 @@ const handleSelectionChange = (keys: any) => {
 const showFilterLabel = ref(false);
 const filterLabel = ref('');
 const showModalRef = ref(false)
-const selectedOption = ref(null)
+const selectedOption = ref('')
+const isOptionSelected = computed(() => {
+  return selectedOption.value !== '';
+});
 
 const clearFilter = async () => {
-  selectedOption.value = null;
+  selectedOption.value = '';
   showFilterLabel.value = false;
   filterLabel.value = '';
   searchText.value = ''; // 重置搜索條件，如果它與篩選相關聯
@@ -446,7 +474,7 @@ const cancelSearch = () => {
 };
 
 // 處理全局點擊事件
-const handleOutsideClick = (event :any) => {
+const handleOutsideClick = (event: any) => {
   if (!event.target.closest('#isSearching')) {
     cancelSearch();
   }
@@ -666,6 +694,7 @@ button.project-button:active {
 
 .custom-placeholder {
   height: 36px;
+  border-radius: 4px;
 }
 
 .custom-placeholder:hover {
@@ -676,11 +705,11 @@ button.project-button:active {
 }
 
 .custom-placeholder::placeholder {
-  color: rgba(194, 194, 194, 1);
-  font-size: 14px;
+  color: var(--text-disabled);
   font-weight: 400;
   letter-spacing: 1px;
   padding: 2px;
+  font-size: 16px;
 }
 
 
@@ -696,9 +725,10 @@ button.project-button:active {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  background: url('data:image/svg+xml;utf8,<svg fill="%23000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat;
-  background-position: right 0.5rem center;
-  background-size: 1.25em;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="currentColor" d="M104.704 338.752a64 64 0 0 1 90.496 0l316.8 316.8l316.8-316.8a64 64 0 0 1 90.496 90.496L557.248 791.296a64 64 0 0 1-90.496 0L104.704 429.248a64 64 0 0 1 0-90.496z"/></svg>') no-repeat;
+  background-position: right 12px center;
+  background-size: 1em;
+  cursor: pointer;
 }
 
 
@@ -706,15 +736,40 @@ button.project-button:active {
   -webkit-box-shadow: 0 0 5px var(--primary-hover);
   -moz-box-shadow: 0 0 5px var(--primary-hover);
   box-shadow: 0 0 5px var(--primary-hover);
-  /* border: 1px solid var(--primary-hover); */
 }
 
-.custom-placeholder::placeholder {
-  color: rgba(194, 194, 194, 1);
-  font-size: 14px;
+.custom-select {
+  width: 100%;
+  height: 36px;
+  background-color: white;
+  border-radius: 4px;
+  padding: 0 12px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  font-size: 16px;
+  letter-spacing: 1px;
+}
+
+.custom-select option {
+  color: black;
+}
+
+.disabled-style {
+  color: var(--text-disabled);
   font-weight: 400;
   letter-spacing: 1px;
   padding: 2px;
 }
 
+.custom-select:hover {
+  -webkit-box-shadow: 0 0 5px var(--primary-hover);
+  -moz-box-shadow: 0 0 5px var(--primary-hover);
+  box-shadow: 0 0 5px var(--primary-hover);
+}
+
+.custom-select option:hover {
+  background-color: #2c8eee;
+  color: white;
+}
 </style>

@@ -386,6 +386,10 @@ Others styles
 }
 
 
+.n-input{
+  font-size: 16px;
+}
+
 
 .n-input--pair,
 .n-input--stateful
@@ -395,21 +399,19 @@ Others styles
 }
 
 .n-button{
-  background-color: none;
-  border: 1px solid var(--primary-hover);
   color: var(--text);
   --n-text-color-hover: #000 !important;
-    --n-text-color-pressed: #2c8eee !important;
-    --n-text-color-focus: var(--text-white) !important;
-    --n-border-hover: 1px solid var(--text-white) !important;
-    --n-border-pressed: 1px solid #2c8eee !important;
-    --n-border-focus: 1px solid var(--text-white) !important;
-    --n-color-hover: var(--text-white) !important;
-    --n-color-pressed: #2c8eee !important;
-    --n-color-focus: var(--text-white) !important;
-    --n-border-hover: 1px solid var(--text-white) !important;
-    --n-border-pressed: 1px solid #2c8eee !important;
-    --n-border-focus: 1px solid var(--text-white) !important;
+  --n-text-color-pressed: #2c8eee !important;
+  --n-text-color-focus: var(--text-white) !important;
+  --n-border-hover: 1px solid var(--text-white) !important;
+  --n-border-pressed: 1px solid #2c8eee !important;
+  --n-border-focus: 1px solid var(--text-white) !important;
+  --n-color-hover: var(--text-white) !important;
+  --n-color-pressed: #2c8eee !important;
+  --n-color-focus: var(--text-white) !important;
+  --n-border-hover: 1px solid var(--text-white) !important;
+  --n-border-pressed: 1px solid #2c8eee !important;
+  --n-border-focus: 1px solid var(--text-white) !important;
 }
 /* 增大 checkbox 的大小 */
 .n-checkbox {
@@ -474,6 +476,11 @@ button:disabled {
   cursor: not-allowed; /* 或 cursor: default; 根據您的需求 */
 }
 
+.n-button .n-button__content{
+  font-size: 16px;
+  padding: 6px;
+}
+
 .n-base-selection-input:active{
   color: var(--primary);
 }
@@ -483,4 +490,14 @@ button:disabled {
 }
 .n-base-selection-input__contentL:active{
   color: var(--primary);
+}
+
+.n-base-clear .n-date-picker-icon svg{
+  color: transparent;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36"><path fill="currentColor" d="M32.25 6h-4v3a2.2 2.2 0 1 1-4.4 0V6H12.2v3a2.2 2.2 0 0 1-4.4 0V6h-4A1.78 1.78 0 0 0 2 7.81v22.38A1.78 1.78 0 0 0 3.75 32h28.5A1.78 1.78 0 0 0 34 30.19V7.81A1.78 1.78 0 0 0 32.25 6ZM10 26H8v-2h2Zm0-5H8v-2h2Zm0-5H8v-2h2Zm6 10h-2v-2h2Zm0-5h-2v-2h2Zm0-5h-2v-2h2Zm6 10h-2v-2h2Zm0-5h-2v-2h2Zm0-5h-2v-2h2Zm6 10h-2v-2h2Zm0-5h-2v-2h2Zm0-5h-2v-2h2Z" class="clr-i-solid clr-i-solid-path-1"/><path fill="currentColor" d="M10 10a1 1 0 0 0 1-1V3a1 1 0 0 0-2 0v6a1 1 0 0 0 1 1Z" class="clr-i-solid clr-i-solid-path-2"/><path fill="currentColor" d="M26 10a1 1 0 0 0 1-1V3a1 1 0 0 0-2 0v6a1 1 0 0 0 1 1Z" class="clr-i-solid clr-i-solid-path-3"/><path fill="none" d="M0 0h36v36H0z"/></svg>') no-repeat;
+}
+
+.custom-date-picker .n-date-picker-icon {
+  background: url('@/assets/icons/add.svg') no-repeat center center; 
+  background-size: cover; 
 }
