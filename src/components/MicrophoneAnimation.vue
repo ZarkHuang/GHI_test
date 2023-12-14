@@ -3,12 +3,18 @@
         :class="{ 'small-screen': isSmallScreen, 'disabled': props.disabled }">
         <div class="circle" :class="{ active: isAnimationActive }">
             <div class="col">
-                <div class="flex items-center mb-2">
-                    <pauseIcon v-if="paused" alt=""
-                        :class="{ 'icon-disabled': props.disabled, 'icon-small': isSmallScreen }" class="ml-2.5 mt-2" />
-                    <microOnIcon v-else alt="" :class="{ 'icon-disabled': props.disabled, 'icon-small': isSmallScreen }" />
+                <div class="flex items-center ">
+
+                    <n-icon v-if="paused" alt="" :class="{ 'icon-disabled': props.disabled, 'icon-small': isSmallScreen }">
+                        <pauseIcon />
+                    </n-icon>
+
+                    <n-icon v-else alt="" :class="{ 'icon-disabled': props.disabled, 'icon-small': isSmallScreen }">
+                        <microOnIcon />
+                    </n-icon>
+
                 </div>
-                <div>
+                <div class="mt-2">
                     {{ recordingTime }}
                 </div>
             </div>
@@ -70,23 +76,15 @@ onBeforeUnmount(() => {
 <style scoped>
 .mic-container {
     display: flex;
-    /* 使用 Flexbox */
     justify-content: center;
-    /* 水平置中 */
     align-items: center;
-    /* 垂直置中 */
     margin-top: 3rem;
     position: absolute;
     top: 40%;
-    /* 調整為 0 */
     left: 0;
-    /* 調整為 0 */
     right: 0;
-    /* 新增 */
     bottom: 0;
-    /* 新增 */
     transform: translateY(-50%);
-    /* 垂直向上偏移 50% */
 }
 
 .mic-container .circle {
@@ -95,11 +93,8 @@ onBeforeUnmount(() => {
     border-radius: 50%;
     background: #ffffff;
     display: flex;
-    /* 使用 Flexbox */
     justify-content: center;
-    /* 水平置中 */
     align-items: center;
-    /* 垂直置中 */
     transition: 0.5s;
     box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.05), 0 1px 18px 0 rgba(0, 0, 0, 0.05),
         0 3px 5px -3px rgba(0, 0, 0, 0.05);
@@ -112,7 +107,7 @@ onBeforeUnmount(() => {
 
 .mic-container .circle i {
     color: #b2b1b1;
-    font-size: 84px;
+    font-size: 72px;
     transition: 0.9s;
 }
 
@@ -215,7 +210,6 @@ onBeforeUnmount(() => {
     }
 }
 
-
 .small-screen .circle {
     width: 240px;
     height: 240px;
@@ -245,32 +239,47 @@ onBeforeUnmount(() => {
     height: 180px;
 }
 
-
+.n-icon svg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0 auto;
+    width: 5rem;
+    height: 5rem;
+}
 
 /* 省略其他不變的樣式 */
 
 @media (max-width: 480px) {
     .mic-container {
         margin-top: 1rem;
+        top: 46%;
     }
 
     .mic-container .circle {
-        width: 200px;
-        /* 更小尺寸的圓 */
-        height: 200px;
+        width: 240px;
+        height: 240px;
     }
 
-    .icon-small {
+    .n-icon svg {
+        position: absolute;
+        top: 60%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        margin: 0 auto;
         width: 3rem;
-        /* 調整為較小尺寸 */
         height: 3rem;
     }
+
 }
 
 /* 新增的媒體查詢 */
 @media (max-width: 768px) {
     .mic-container {
         margin-top: 2rem;
+        margin-top: 1rem;
+        top: 46%;
     }
 }
 
@@ -281,6 +290,7 @@ onBeforeUnmount(() => {
 
 .icon-disabled {
     filter: grayscale(100%);
-}</style>
+}
+</style>
 
   

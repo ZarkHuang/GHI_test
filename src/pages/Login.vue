@@ -133,8 +133,6 @@
           </div>
         </n-card>
       </n-modal>
-
-
       <!-- 網站使用者協議 Modal -->
       <n-modal v-model:show="showUserAgreementModal"
         class="overflow-y-auto max-h-[700px] md:max-h-[700px] w-11/12 max-w-xl md:max-w-2xl mx-auto">
@@ -241,8 +239,8 @@ const username = ref('');
 const password = ref('');
 const message = useMessage();
 const showForgetPasswordModal = ref(false);
-// const userDetails = ref(null);
 const showPassword = ref(false);
+
 const openForgetPasswordModal = () => {
   showForgetPasswordModal.value = true;
 };
@@ -260,20 +258,16 @@ const handlerLogin = async () => {
     message.error('請先閱讀並同意用戶協議與隱私協議');
     return;
   }
-
-  // 檢查用戶輸入的帳號密碼是否是假設定的帳號密碼
   try {
       const response = await loginUser(username.value, password.value);
       console.log(response)
       if (response.status === 200 && response.data.data.token) {
         const token = response.data.data.token;
         localStorage.setItem("token", token)
-
         // 使用 API 回傳的 username 或設置一個默認值
         localStorage.setItem('username', username.value)
-
         const userStore = useUserStore();
-        userStore.login(username.value, token, username.value);
+        userStore.login(username.value, token);
         router.push("/scene");
         console.log("登入成功");
       } else {
@@ -283,8 +277,6 @@ const handlerLogin = async () => {
       message.error('登入失敗！帳號或密碼錯誤');
     }  
 };
-
-
 
 
 const callback = async (response: GoogleResponse) => {
@@ -304,7 +296,9 @@ const handlerGoogleLogin = async (userData: UserData) => {
   console.log(res_googleuser)
   if (res_googleuser.status === 201) {
     const userStore = useUserStore();
-    userStore.login(username.value, res_googleuser.data.data.token, userData.name);
+    // userStore.login(username.value, res_googleuser.data.data.token);
+    userStore.login(userData.name, res_googleuser.data.data.token);
+    localStorage.setItem('username', userData.name);
     router.push("/scene");
   }
 }
@@ -341,34 +335,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* 隱私modal */
-.modal-content {
-  width: 90%;
-  max-height: 80vh; /* 設定高度為視窗高度的 80% */
-  max-width: 855px;
-  overflow-y: auto;
-}
-
-@media (max-width: 480px) {
-  .modal-content {
-    max-width: 95%; /* 小屏幕時，寬度稍微增加 */
-    max-height: 80vh; /* 小屏幕時，仍保持高度為視窗的 80% */
-  }
-}
-
-@media (max-width: 768px) {
-  .modal-content {
-    max-width: 90%; /* 中型屏幕時的寬度 */
-    max-height: 80vh; /* 中型屏幕時，高度維持不變 */
-  }
-}
-
-.modal-body {
-  padding: 10px;
-  text-align: left;
-  white-space: pre-line;
-}
-
 /* checkFrom style */
 .checkForm input[type="checkbox"] {
   appearance: none;
@@ -376,7 +342,7 @@ onMounted(() => {
   -moz-appearance: none;
   background: white;
   /* 或其他您希望的背景顏色 */
-  border: 1px solid var(--text);
+  border: 1px solid var(--primary);
   cursor: pointer;
   position: relative;
   transition: .2s ease-in-out;
@@ -386,7 +352,7 @@ onMounted(() => {
 }
 
 .checkForm input[type="checkbox"]:checked {
-  background: var(--text);
+  background: var(--primary);
 }
 
 .checkForm input[type="checkbox"]:checked::after {
@@ -402,6 +368,7 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   margin-bottom: 0;
+  white-space: nowrap;
 }
 
 .checkForm span {
@@ -417,9 +384,11 @@ onMounted(() => {
 
 @media (max-width: 480px) {
   .checkForm {
-    text-wrap: nowrap;
+    white-space: nowrap;
   }
-
+  .checkForm input {
+    padding: 8px;
+  }
   .checkForm span,
   .checkForm button {
     font-size: 12px;
@@ -439,19 +408,9 @@ onMounted(() => {
   }
 }
 
-
-@media (max-width: 392px) {
+@media (max-width: 380px) {
   .checkForm {
-    text-wrap: nowrap;
-  }
-  .checkForm input {
-    padding: 6px;
-  }
-}
-
-@media (max-width: 330px) {
-  .checkForm {
-    text-wrap: wrap;
+    white-space: wrap;
   }
 
   .checkForm input {
@@ -557,5 +516,33 @@ button.custom-button:hover {
 
 .passwordForget.hover-underline-animation:hover:after {
   background: var(--primary);
-}</style>
+}
+
+/* 隱私modal */
+.modal-content {
+  width: 90%;
+  max-height: 80vh; 
+  max-width: 855px;
+  overflow-y: auto;
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    max-width: 95%; 
+    max-height: 80vh; 
+  }
+}
+@media (max-width: 768px) {
+  .modal-content {
+    max-width: 90%; /* 中型屏幕時的寬度 */
+    max-height: 80vh; /* 中型屏幕時，高度維持不變 */
+  }
+}
+.modal-body {
+  padding: 10px;
+  text-align: left;
+  white-space: pre-line;
+}
+
+</style>
 @/apis/authAPI

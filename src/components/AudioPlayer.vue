@@ -1,7 +1,6 @@
 <template>
     <div class="audio-player p-2 mr-2 rounded-full " v-if="audioUrl">
         <button @click="togglePlay" class="px-3">
-
             <svg v-if="isPlaying" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                 <path fill="currentColor" d="M14 19V5h4v14h-4Zm-8 0V5h4v14H6Z" />
             </svg>
@@ -19,97 +18,88 @@
     </div>
 </template>
   
-<script lang="ts">
-import { ref, watch, computed } from 'vue';
+<script setup lang="ts">
+import { ref, watch, computed, onBeforeUnmount } from 'vue';
 
-export default {
-    props: {
-        audioUrl: String,
-    },
-    setup(props) {
-        const audioElement = ref(new Audio(props.audioUrl));
-        const isPlaying = ref(false);
-        const progress = ref(0);
-        const currentTime = ref(0);
-        const duration = ref(0);
+const props = defineProps({
+    audioUrl: String,
+});
 
+const emit = defineEmits(['stopAudio']);
+const audioElement = ref(new Audio(props.audioUrl));
+const isPlaying = ref(false);
+const progress = ref(0);
+const currentTime = ref(0);
+const duration = ref(0);
 
-        const initializeAudio = () => {
-            audioElement.value = new Audio(props.audioUrl);
+const initializeAudio = () => {
+    audioElement.value = new Audio(props.audioUrl);
+    const countAudioTime = async () => {
+        while (isNaN(audioElement.value.duration) || audioElement.value.duration === Infinity) {
+            await new Promise(resolve => setTimeout(resolve, 200));
+            audioElement.value.currentTime = 10000000 * Math.random();
+        }
+        audioElement.value.currentTime = 0;
+        duration.value = audioElement.value.duration;
+    };
 
-            const countAudioTime = async () => {
-                while (isNaN(audioElement.value.duration) || audioElement.value.duration === Infinity) {
-                    await new Promise(resolve => setTimeout(resolve, 200));
-                    audioElement.value.currentTime = 10000000 * Math.random();
-                }
-                audioElement.value.currentTime = 0;
-                duration.value = audioElement.value.duration;
-            };
-
-
-
-            countAudioTime().then(() => {
-                console.log('音樂檔案的總時長:', audioElement.value.duration);
-            }).catch(error => {
-                console.error("Error calculating audio duration:", error);
-            });
-        };
-
-
-        watch(() => props.audioUrl, (newUrl) => {
-            if (newUrl) {
-                initializeAudio();
-            }
-        }, { immediate: true });
-
-        const togglePlay = () => {
-            if (audioElement.value.paused) {
-                audioElement.value.play();
-                isPlaying.value = true;
-            } else {
-                audioElement.value.pause();
-                isPlaying.value = false;
-            }
-        };
-
-        const seek = (event: any) => {
-            const bounds = event.target.getBoundingClientRect();
-            const x = event.clientX - bounds.left;
-            const percentage = x / bounds.width;
-            audioElement.value.currentTime = audioElement.value.duration * percentage;
-        };
-
-        audioElement.value.addEventListener('timeupdate', () => {
-            currentTime.value = audioElement.value.currentTime;
-            duration.value = audioElement.value.duration;
-            progress.value = (currentTime.value / duration.value) * 100;
-        });
-
-        audioElement.value.addEventListener('ended', () => {
-            isPlaying.value = false;
-            currentTime.value = 0;
-            progress.value = 0;
-        });
-
-        const formatTime = (time: number) => {
-            const minutes = Math.floor(time / 60).toString().padStart(2, '0');
-            const seconds = Math.floor(time % 60).toString().padStart(2, '0');
-            return `${minutes}:${seconds}`;
-        };
-
-        const currentTimeFormatted = computed(() => formatTime(currentTime.value));
-        const durationFormatted = computed(() => formatTime(duration.value));
-
-        return {
-            togglePlay,
-            seek,
-            isPlaying,
-            progress,
-            currentTimeFormatted,
-            durationFormatted
-        };
-    },
+    countAudioTime().then(() => {
+        console.log('音樂檔案的總時長:', audioElement.value.duration);
+    }).catch(error => {
+        console.error("Error calculating audio duration:", error);
+    });
 };
+
+watch(() => props.audioUrl, (newUrl) => {
+    if (newUrl) {
+        initializeAudio();
+    }
+}, { immediate: true });
+
+const togglePlay = () => {
+    if (audioElement.value.paused) {
+        audioElement.value.play();
+        isPlaying.value = true;
+    } else {
+        audioElement.value.pause();
+        isPlaying.value = false;
+    }
+};
+
+onBeforeUnmount(() => {
+    if (audioElement.value && !audioElement.value.paused) {
+        audioElement.value.pause();
+        emit('stopAudio');
+    }
+});
+
+const seek = (event: any) => {
+    const bounds = event.target.getBoundingClientRect();
+    const x = event.clientX - bounds.left;
+    const percentage = x / bounds.width;
+    audioElement.value.currentTime = audioElement.value.duration * percentage;
+};
+
+audioElement.value.addEventListener('timeupdate', () => {
+    currentTime.value = audioElement.value.currentTime;
+    duration.value = audioElement.value.duration;
+    progress.value = (currentTime.value / duration.value) * 100;
+});
+
+audioElement.value.addEventListener('ended', () => {
+    isPlaying.value = false;
+    currentTime.value = 0;
+    progress.value = 0;
+});
+
+const formatTime = (time: number) => {
+    const minutes = Math.floor(time / 60).toString().padStart(2, '0');
+    const seconds = Math.floor(time % 60).toString().padStart(2, '0');
+    return `${minutes}:${seconds}`;
+};
+
+const currentTimeFormatted = computed(() => formatTime(currentTime.value));
+const durationFormatted = computed(() => formatTime(duration.value));
 </script>
 
 <style scoped>
@@ -147,7 +137,7 @@ export default {
 
 @media (max-width: 480px) {
     .audio-player .progress-bar {
-        width: 60%;
+        width: 55%;
     }
 
     .audio-player .time-display {
@@ -155,6 +145,23 @@ export default {
     }
 
     .audio-player .time-display {
-    white-space: wrap;
+        white-space: wrap;
+    }
 }
-}</style>
+
+
+@media (max-width: 389px) {
+    .audio-player .progress-bar {
+        width: 55%;
+    }
+
+    .audio-player .time-display {
+        font-size: 12px;
+    }
+
+    .audio-player .time-display {
+        white-space: wrap;
+    }
+
+}
+</style>

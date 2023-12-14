@@ -1,5 +1,5 @@
 <template>
-  <section class="cards">
+  <section :class="['cards', cardsClass]">
     <article v-for="(card, index) in cards" :key="index" @mouseover="hoverOn(card)" @mouseleave="hoverOff(card)"
       @click="toProject(card.eng)" class="card">
       <div class="card__img-container" :style="{ backgroundColor: card.isHovering ? card.hoverBackgroundColor : '' }">
@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, markRaw , defineAsyncComponent  } from 'vue';
+import { reactive, markRaw, defineAsyncComponent, computed } from 'vue';
 import { useRouter } from "vue-router";
 
 // icon
@@ -83,14 +83,23 @@ const cards = reactive<Card[]>([
     isHovering: false
   },
   {
-    name: "Week Summary",
+    name: "Weekly Summary",
     eng: "Inpatient",
     icon: markRaw(weekSummary),
     hoverIcon: markRaw(weekSummaryWhite),
     hoverBackgroundColor: '#57a4f2',
     isHovering: false
   },
+
 ]);
+
+/*
+計算如果是初始 6 張卡片時，會水平垂直置中於畫面
+如果沒大於 6 張卡片，總體會置上多卡片會置左
+*/
+const cardsClass = computed(() => {
+  return cards.length === 6 ? 'six-cards' : '';
+});
 
 const toProject = (sceneType: string) => {
   console.log(sceneType)
@@ -112,9 +121,18 @@ const hoverOff = (card: Card) => {
   align-items: center;
   gap: 40px;
   padding: 40px;
-  height: 90vh;
+  /* height: 90vh; */
+  height: calc(100vh - 40px);
 }
 
+.cards.six-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  /* height: 100vh; */
+  padding: 20px;
+}
 
 .card {
   display: flex;
@@ -124,15 +142,14 @@ const hoverOff = (card: Card) => {
   min-height: 200px;
   width: 164px;
   background-color: var(--background-white);
-  border-radius: 12px;
+  border-radius: 4px;
   overflow: hidden;
-  box-shadow: 0px 5px 15px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0px 10px -3px rgb(0 0 0 / 0.1), 0 0px 10px -4px rgb(0 0 0 / 0.1);
   cursor: pointer;
   color: var(--text);
   padding: 20px;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0, 1);
 }
-
 
 .card__img-container {
   width: 80px;
@@ -153,13 +170,11 @@ const hoverOff = (card: Card) => {
 
 .card__info {
   margin-top: 10px;
-  /* 增加一點距離 */
   min-height: 40px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  /* 置中文字 */
 }
 
 .card:hover {
@@ -169,7 +184,6 @@ const hoverOff = (card: Card) => {
   color: #fff;
 }
 
-/* 媒體查詢 - 小於 1280px */
 @media (max-width: 1280px) {
   .cards {
     height: auto;
@@ -183,14 +197,15 @@ const hoverOff = (card: Card) => {
   }
 }
 
-/* 媒體查詢 - 小於 576px */
 @media (max-width: 576px) {
   .cards {
-    padding: 16px;
     display: flex;
+    flex-direction: row;
     flex-wrap: wrap;
-    justify-content: space-around;
-    gap: 8px;
+    gap: 16px;
+    justify-content: space-between;
+    align-items: center;
+    align-content: center;
   }
 
   .card {
@@ -198,8 +213,21 @@ const hoverOff = (card: Card) => {
     margin-bottom: 16px;
   }
 
-  .card:hover {
-    transform: scale(1.05);
+  .cards.six-cards {
+    height: calc(100vh - 40px);
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+  }
+}
+
+@media (max-width: 389px) {
+  .cards.six-cards {
+    margin-top: 16px;
+    height: calc(100vh);
+    justify-content: center;
+    align-items: center;
+    align-content: center;
   }
 }
 </style>

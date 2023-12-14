@@ -1,13 +1,18 @@
 import request from "@/apis/axios";
+import {usePermissionStore } from "@/store/permiossion";
 // 獲取所有項目
 const token = localStorage.getItem("token")
 const headers =  {
     'Authorization' : `Bearer ${token}`
 }
-
+const {permissionList} = usePermissionStore();
 
 // 根據用戶名稱獲取項目列表
 export const getFuzzyProjectsByUser = async (obj :object) => {
+  if (!permissionList.includes("7121061576337137659")) {
+    console.error('No permission to fetch fuzzy projects');
+    return { error: 'No permission', data: null }; 
+  }
     return request({
         url: "/project/fuzzy",
         method: 'post',
@@ -28,6 +33,10 @@ export const getFilterProjectsByUser = async (obj :object) => {
 
 // 創建新項目
 export const postProject = async (obj: Object) => {
+    if (!permissionList.includes("7121062016688726011")) {
+        console.error('No permission to fetch Post projects');
+        return { error: 'No permission', data: null }; 
+      }
     return request({
         url: '/project/create',
         method: 'post',
@@ -47,6 +56,10 @@ export const getProjectById = async (project_id: string) => {
 
 // 更新標題項目
 export const updateProjectByID = async (project_id:number, updatedData:any) => {
+    if (!permissionList.includes("7121062191503122427")) {
+        console.error('No permission to fetch update projects');
+        return { status:403 , error: 'No permission', data: null }; 
+      }
     return request({
       url: `/project/${project_id}`,
       method: 'put',
@@ -68,6 +81,10 @@ export const updateSttResult  = async (id: number, sttResult:string) => {
 
 // 刪除特定項目
 export const deleteProjectById = async (id: number) => {
+    if (!permissionList.includes("7121062306393497595")) {
+        console.error('No permission to fetch Delete projects');
+        return { error: 'No permission', data: null }; 
+      }
     return request({
         url: `/project/${id}`,
         method: 'delete',
