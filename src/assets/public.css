@@ -517,3 +517,47 @@ button:disabled {
   background: url('@/assets/icons/add.svg') no-repeat center center; 
   background-size: cover; 
 }
+
+/* -----test----- */
+/* 
+@media (max-width: 480px) {
+  
+
+  .n-data-table-table th:nth-child(3){
+    background-color: lightcoral; 
+    visibility: hidden;
+  }
+  
+  .n-data-table .n-data-table-thead{
+    --n-merged-th-color: #ccc;
+    border-bottom: none;
+  }
+
+  .n-data-table .n-data-table-th:nth-child(2){
+    border-bottom: none;
+    background: #ccc;
+    width: 100%;
+  }
+  .n-data-table-table tr td:nth-child(2){
+    background-color: lightgreen;
+    position: relative;
+    left: 0;
+  }
+  
+  .n-data-table-table tr td:nth-child(3){
+    background-color: none ;
+    position: absolute;
+    left: 20%;
+    margin-top: 30px;
+    font-size: 12px;
+  }
+
+  .n-data-table .n-data-table-th{
+    border-bottom: none;
+  }
+
+  .n-data-table .n-data-table-td {
+    background: none !important;
+    border-bottom: none;
+  }
+} */

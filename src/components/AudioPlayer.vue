@@ -26,35 +26,49 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['stopAudio']);
-const audioElement = ref(new Audio(props.audioUrl));
+const audioElement = ref(new Audio());
 const isPlaying = ref(false);
 const progress = ref(0);
 const currentTime = ref(0);
 const duration = ref(0);
 
-const initializeAudio = () => {
-    audioElement.value = new Audio(props.audioUrl);
-    const countAudioTime = async () => {
-        while (isNaN(audioElement.value.duration) || audioElement.value.duration === Infinity) {
-            await new Promise(resolve => setTimeout(resolve, 200));
-            audioElement.value.currentTime = 10000000 * Math.random();
+// const initializeAudio = () => {
+//     audioElement.value = new Audio(props.audioUrl);
+//     const countAudioTime = async () => {
+//         while (isNaN(audioElement.value.duration) || audioElement.value.duration === Infinity) {
+//             await new Promise(resolve => setTimeout(resolve, 200));
+//             audioElement.value.currentTime = 10000000 * Math.random();
+//         }
+//         audioElement.value.currentTime = 0;
+//         duration.value = audioElement.value.duration;
+//     };
+
+//     countAudioTime().then(() => {
+//         console.log('音樂檔案的總時長:', audioElement.value.duration);
+//     }).catch(error => {
+//         console.error("Error calculating audio duration:", error);
+//     });
+// };
+
+watch(() => props.audioUrl, (newUrl, oldUrl) => {
+    if (newUrl && newUrl !== oldUrl) {
+        if (!audioElement.value.paused) {
+            audioElement.value.pause();
         }
-        audioElement.value.currentTime = 0;
-        duration.value = audioElement.value.duration;
-    };
+        audioElement.value.src = newUrl;
+        audioElement.value.load(); // 重新加載音頻
 
-    countAudioTime().then(() => {
-        console.log('音樂檔案的總時長:', audioElement.value.duration);
-    }).catch(error => {
-        console.error("Error calculating audio duration:", error);
-    });
-};
-
-watch(() => props.audioUrl, (newUrl) => {
-    if (newUrl) {
-        initializeAudio();
+        // 當音頻加載完畢時更新持續時間
+        audioElement.value.onloadedmetadata = () => {
+            duration.value = audioElement.value.duration;
+            currentTime.value = 0;
+            progress.value = 0;
+            isPlaying.value = false;
+        };
     }
 }, { immediate: true });
+
+
 
 const togglePlay = () => {
     if (audioElement.value.paused) {
@@ -103,6 +117,8 @@ const durationFormatted = computed(() => formatTime(duration.value));
 </script>
 
 <style scoped>
+
+
 .audio-player {
     display: flex;
     align-items: center;

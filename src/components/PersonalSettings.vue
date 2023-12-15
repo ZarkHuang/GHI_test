@@ -17,9 +17,7 @@
                     <p class="px-6 py-2 bg-[#2C8EEE] text-white">
                         帳號資訊
                     </p>
-
                     <div class="flex flex-col gap-5 p-6">
-
                         <div class="flex items-center gap-2">
                             <p :class="{ 'w-120px': !isMobile, 'w-90px': isMobile }">角色:</p>
 
@@ -385,7 +383,6 @@ const user: userProfile = reactive({
     job_title: "工程師",
     email: "zhan332066@gmail.com"
 })
-
 
 /****************************************************************
    權限設置

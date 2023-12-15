@@ -194,7 +194,6 @@
         </template>
       </n-data-table>
     </div>
-
   </div>
 </template>
 
@@ -214,7 +213,6 @@ import search from '@/assets/icons/search.svg'
 import close from '@/assets/icons/close.svg'
 import arrowLeft from '@/assets/icons/arrowLeft.svg'
 import arrowDown from '@/assets/icons/arrowDown.svg'
-
 
 type RowData = {
   id: string
@@ -283,7 +281,6 @@ const sceneTitle = computed(() => {
 /****************************************************************
     // 權限設置
 *****************************************************************/
-
 
 const isAvailableCreateProject = computed(() => permiossionStore.permissionList.includes("7121062016688726011")); //新增確認
 const isAvailableDeleteProject = computed(() => permiossionStore.permissionList.includes("7121062306393497595")); //刪除確認
@@ -356,10 +353,10 @@ const deleteSelectedProjects = async () => {
   selectedRows.value = [];
 };
 
-
 const projectSearchText = ref('');
 const generateTimeRange = ref(null);
 const updateTimeRange = ref(null);
+
 //篩選專案
 const onPositiveClick = async () => {
   const filterObj = {
@@ -385,6 +382,7 @@ const onPositiveClick = async () => {
   selectedOption.value = '';
   showModalRef.value = false;
 };
+
 // 重新計算日期時間
 const formatISODate = (date: string, isEndDate = false) => {
   const d = new Date(date);
@@ -396,6 +394,7 @@ const formatISODate = (date: string, isEndDate = false) => {
   const day = `${d.getDate()}`.padStart(2, '0');
   return `${year}-${month}-${day}`;
 };
+
 const formatProjectData = (project: any) => {
   return {
     ...project,
@@ -403,6 +402,7 @@ const formatProjectData = (project: any) => {
     update_time: new Date(project.update_time).toLocaleDateString()
   };
 };
+
 const temporaryOption = ref('');
 const onNegativeClick = () => {
   temporaryOption.value = '';
@@ -602,6 +602,12 @@ const columns: ComputedRef<DataTableColumns<RowData>> = computed(() => {
         ellipsis: true,
         minWidth: 160,
       },
+    //   {
+    //   key: 'generate_time',
+    //   align: 'center',
+    //   ellipsis: true,
+    //   minWidth: 120,
+    // },
     ]
   }
   return [
@@ -694,7 +700,6 @@ watch(searchText, async (newVal, oldVal) => {
   }
 });
 //點任一處仍無法直接關閉
-
 onMounted(async () => {
   window.addEventListener('resize', () => {
     isSmallScreen.value = window.innerWidth < 768;
@@ -721,8 +726,8 @@ onUnmounted(() => {
 
 </script>
 
-<style scoped>
 
+<style scoped>
 body {
   color: var(--text);
 }

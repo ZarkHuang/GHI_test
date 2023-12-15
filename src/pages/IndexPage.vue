@@ -513,15 +513,23 @@ const fetchAndProcessProjects = async () => {
   }
 };
 
+const projectSttResult = ref('')
 const fetchProjectDetails = async () => {
   const response = await getProjectById(projectId);
+  projectSttResult.value = response.data.data.stt_result;
   projectStatus.value = response.data.data.stt_status;
   projectllmStatus.value = response.data.data.llm_status;
   projectDetails.value = response.data.data;
   const audio_path: string = response.data.data.audio_path.split('/')[2];
-  audioUrl.value = "https://ghi-dev.everfortuneai.com.tw/api/v1/files/" + audio_path
+  const timestamp = new Date().getTime();
+  audioUrl.value = `https://ghi-dev.everfortuneai.com.tw/api/v1/files/${audio_path}?t=${timestamp}`;
   editableSttText.value = response.data.data.stt_result;
   editableSttText.value = editableSttText.value.replace(/\s+/g, '');
+  console.log(response.data)
+  console.log(projectStatus.value)
+  if (projectSttResult.value === '' && projectStatus.value === 'finished') {
+    editableSttText.value = '音檔有誤無法生成結果，請再次確認音檔。'
+  }
   editableLlmText.value = response.data.data.llm_result;
 };
 
@@ -533,8 +541,9 @@ const deleteAudio = async () => {
     try {
       const result = await deleteAudioFile(fileName);
       if (result.status === 200) {
-        projectDetails.value.audio_path = ""; // 清除或更新音频路径
+        projectDetails.value.audio_path = "";
         fetchProjectDetails();
+        console.log('我刪除後並重新刷新')
       } else {
         console.log('刪除音檔未成功', result.status);
       }
@@ -561,7 +570,7 @@ const updateProjectName = async () => {
     message.success('專案名稱已更新');
     await fetchAndProcessProjects();
   } catch (error) {
-    console.error(error); 
+    console.error(error);
     message.error('更新專案名稱失敗');
   }
 };
@@ -610,28 +619,24 @@ const llmResuleBadges = computed(() => {
 
 const processLlmText = (text: string, scene: string) => {
   const list = text.split("\n");
-  let returnList: any = [];
-  if (scene === 'Nursing') {
-    list.forEach((item) => {
-      const match = item.match(/^([DART]):\s*(.*)$/);
+  return list.map((item) => {
+    if (scene === 'Nursing') {
+      const match = item.match(/^([DART])[:\s]\s*(.*)$/);
       if (match) {
-        returnList.push([match[1], match[2]]);
-      } else {
-        returnList.push(['', item]);
+        return [match[1], match[2]];
       }
-    });
-  } else if (scene === 'FirstVisit') {
-    list.forEach((item) => {
-      const firstWordMatch = item.match(/^([SOAP])([:\s\(])\s*(.*)$/);
+    } else if (scene === 'FirstVisit') {
+      const firstWordMatch = item.match(/^([SOAP])[:\s]\s*(.*)$/);
       if (firstWordMatch) {
-        returnList.push([firstWordMatch[1], firstWordMatch[3]]);
-      } else {
-        returnList.push(['', item]);
+        return [firstWordMatch[1], firstWordMatch[2]];
       }
-    });
-  }
-  return returnList;
-}
+    }
+
+    return ['', item];
+  });
+};
+
+
 
 // 刪除語音檔案的modal
 const showDeleteConfirmation = ref(false);
@@ -665,50 +670,6 @@ const handleModalConfirm = () => {
 };
 
 
-// 開始錄音
-const startRecording = async () => {
-  navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-    let mimeType = 'audio/webm';
-    //解決ios,andriod,pc各裝置語音錄音檔案類型支援問題
-    if (MediaRecorder.isTypeSupported('audio/mp4')) {
-      mimeType = 'audio/mp4';
-    } else if (MediaRecorder.isTypeSupported('audio/webm')) {
-      mimeType = 'audio/webm';
-    } else if (MediaRecorder.isTypeSupported('audio/wav')) {
-      mimeType = 'audio/wav';
-    } else if (MediaRecorder.isTypeSupported('audio/ogg')) {
-      mimeType = 'audio/ogg';
-    } else {
-      console.error("no suitable mimetype found for this device");
-    }
-    if (!window.MediaRecorder) {
-      message.error("此瀏覽器不支持 MediaRecorder");
-    }
-    mediaRecorder = new MediaRecorder(stream, { mimeType: mimeType });
-    mediaRecorder.ondataavailable = event => {
-      if (event.data.size > 0) {
-        audioChunks.push(event.data);
-      }
-    };
-    mediaRecorder.onstart = () => {     // 錄音開始時，設置錄音狀態和計時器
-      console.log('錄音開始');
-      isRecording.value = true;
-      isPaused.value = false
-      intervalId = setInterval(() => {
-        recordingTime.value++;
-        checkRecordingTime();
-      }, 1000);
-    };
-    mediaRecorder.onstop = handleRecordingStop;
-    mediaRecorder.start(1000);
-    showMicrophoneAnimation.value = true;
-  })
-    .catch((error) => {
-      message.error("無法訪問麥克風", error);
-      message.error("無法訪問麥克風，請檢查權限設置");
-    })
-};
-
 const sceneTitle = computed(() => {
   switch (scene) {
     case 'FirstVisit':
@@ -728,14 +689,51 @@ const sceneTitle = computed(() => {
   }
 });
 
+// 開始錄音
+const startRecording = async () => {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    let mimeType = 'audio/webm';
+    const supportedTypes = ['audio/mp4', 'audio/webm', 'audio/wav', 'audio/ogg'];
+    mimeType = supportedTypes.find(type => MediaRecorder.isTypeSupported(type)) || mimeType;
+
+    if (!window.MediaRecorder) {
+      throw new Error("此瀏覽器不支持 MediaRecorder");
+    }
+
+    mediaRecorder = new MediaRecorder(stream, { mimeType });
+    mediaRecorder.ondataavailable = event => {
+      if (event.data.size > 0) {
+        audioChunks.push(event.data);
+      }
+    };
+
+    mediaRecorder.onstart = () => {
+      console.log('錄音開始');
+      isRecording.value = true;
+      isPaused.value = false;
+      intervalId = setInterval(() => {
+        recordingTime.value++;
+        checkRecordingTime();
+      }, 1000);
+    };
+
+    mediaRecorder.onstop = handleRecordingStop;
+    mediaRecorder.start(1000);
+    showMicrophoneAnimation.value = true;
+  } catch (error) {
+    console.error("無法訪問麥克風:", error);
+    message.error(`無法使用麥克風，請確認麥克風的使用權限`);
+  }
+};
+
+
 // 停止錄音
 const stopRecording = () => {
   if (mediaRecorder && mediaRecorder.state !== 'inactive') {
     mediaRecorder.onstop = async () => {
       if (audioChunks.length > 0) {
         const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-        console.log(`錄音大小: ${audioBlob.size}`); // 檢查大小
-        // const audioUrl = URL.createObjectURL(audioBlob);
         audioUrl.value = URL.createObjectURL(audioBlob);
         const file = new File([audioBlob], "upload.wav", {
           type: audioBlob.type,
@@ -743,8 +741,6 @@ const stopRecording = () => {
         });
         const sttResponse = await executeStt(projectId, scene, file);
         console.log('STT Response:', sttResponse.data);
-        console.log(scene, file)
-        // 獲取語音辨識結果
         editableLlmText.value = '結果生成中 ...';
         editableSttText.value = sttResponse.data;
         isInference.value = true;
@@ -755,7 +751,6 @@ const stopRecording = () => {
         console.error('沒有錄音數據');
         message.error('檔案上傳失敗')
       }
-      // 重置錄音相關的變量
       audioChunks = [];
       recordingTime.value = 0;
       isRecording.value = false;
@@ -778,12 +773,9 @@ const stopRecording = () => {
 const handleRecordingStop = () => {
   console.log('錄音結束，狀態:', mediaRecorder ? mediaRecorder.state : '無MediaRecorder');
   if (audioChunks.length > 0) {
-    const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
+    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
     audioUrl.value = URL.createObjectURL(audioBlob);
-    const downloadLink = document.createElement('a');
-    downloadLink.href = audioUrl.value;
-    downloadLink.setAttribute('download', 'recording.mp3');
-    downloadLink.click();
+    audioChunks = [];
     isInference.value = true;
   } else {
     console.error('沒有錄音數據');
