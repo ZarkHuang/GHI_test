@@ -513,6 +513,7 @@ const fetchAndProcessProjects = async () => {
   }
 };
 
+
 const projectSttResult = ref('')
 const fetchProjectDetails = async () => {
   const response = await getProjectById(projectId);
@@ -525,8 +526,6 @@ const fetchProjectDetails = async () => {
   audioUrl.value = `https://ghi-dev.everfortuneai.com.tw/api/v1/files/${audio_path}?t=${timestamp}`;
   editableSttText.value = response.data.data.stt_result;
   editableSttText.value = editableSttText.value.replace(/\s+/g, '');
-  console.log(response.data)
-  console.log(projectStatus.value)
   if (projectSttResult.value === '' && projectStatus.value === 'finished') {
     editableSttText.value = '音檔有誤無法生成結果，請再次確認音檔。'
   }
@@ -693,8 +692,8 @@ const sceneTitle = computed(() => {
 const startRecording = async () => {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    let mimeType = 'audio/webm';
-    const supportedTypes = ['audio/mp4', 'audio/webm', 'audio/wav', 'audio/ogg'];
+    let mimeType = 'audio/wav'; // 修改为更兼容的格式
+    const supportedTypes = ['audio/mpeg', 'audio/webm', 'audio/mp4', 'audio/aac','audio/ogg'];
     mimeType = supportedTypes.find(type => MediaRecorder.isTypeSupported(type)) || mimeType;
 
     if (!window.MediaRecorder) {
@@ -702,6 +701,7 @@ const startRecording = async () => {
     }
 
     mediaRecorder = new MediaRecorder(stream, { mimeType });
+
     mediaRecorder.ondataavailable = event => {
       if (event.data.size > 0) {
         audioChunks.push(event.data);
@@ -735,10 +735,13 @@ const stopRecording = () => {
       if (audioChunks.length > 0) {
         const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
         audioUrl.value = URL.createObjectURL(audioBlob);
-        const file = new File([audioBlob], "upload.wav", {
-          type: audioBlob.type,
-          lastModified: new Date().getTime(),
-        });
+        // const file = new File([audioBlob], "upload.mp4", {
+        //   type: audioBlob.type,
+        //   lastModified: new Date().getTime(),
+        // });
+
+        const file = new File([audioBlob], "upload.mp3", { type: 'audio/wav' });
+
         const sttResponse = await executeStt(projectId, scene, file);
         console.log('STT Response:', sttResponse.data);
         editableLlmText.value = '結果生成中 ...';
@@ -774,6 +777,7 @@ const handleRecordingStop = () => {
   console.log('錄音結束，狀態:', mediaRecorder ? mediaRecorder.state : '無MediaRecorder');
   if (audioChunks.length > 0) {
     const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+    console.log(audioBlob)
     audioUrl.value = URL.createObjectURL(audioBlob);
     audioChunks = [];
     isInference.value = true;

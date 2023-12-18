@@ -51,24 +51,23 @@ const duration = ref(0);
 // };
 
 watch(() => props.audioUrl, (newUrl, oldUrl) => {
+    console.log("Audio URL changed from", oldUrl, "to", newUrl);
     if (newUrl && newUrl !== oldUrl) {
         if (!audioElement.value.paused) {
             audioElement.value.pause();
         }
         audioElement.value.src = newUrl;
         audioElement.value.load(); // 重新加載音頻
-
         // 當音頻加載完畢時更新持續時間
         audioElement.value.onloadedmetadata = () => {
             duration.value = audioElement.value.duration;
+            console.log("Metadata loaded, Duration: ", audioElement.value.duration);
             currentTime.value = 0;
             progress.value = 0;
             isPlaying.value = false;
         };
     }
 }, { immediate: true });
-
-
 
 const togglePlay = () => {
     if (audioElement.value.paused) {
@@ -113,12 +112,17 @@ const formatTime = (time: number) => {
 };
 
 const currentTimeFormatted = computed(() => formatTime(currentTime.value));
-const durationFormatted = computed(() => formatTime(duration.value));
+const durationFormatted = computed(() => {
+    if (isFinite(duration.value) && !isNaN(duration.value)) {
+        return formatTime(duration.value);
+    } else {
+        return "--:--";
+    }
+});
+
 </script>
 
 <style scoped>
-
-
 .audio-player {
     display: flex;
     align-items: center;
